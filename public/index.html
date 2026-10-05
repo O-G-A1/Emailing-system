@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f7f4" />
+    <title>A little about you</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        color: #20251f;
+        background: #f7f7f4;
+        font-synthesis: none;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        padding: 28px 18px;
+        background:
+          radial-gradient(circle at 14% 18%, #e5eee2 0, transparent 27rem),
+          #f7f7f4;
+      }
+      main {
+        width: min(100%, 520px);
+        padding: clamp(28px, 7vw, 52px);
+        border: 1px solid #e5e8e0;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 24px 80px rgba(34, 49, 32, 0.09);
+      }
+      .eyebrow {
+        margin: 0 0 12px;
+        color: #5c7855;
+        font-size: 0.76rem;
+        font-weight: 750;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 7vw, 2.8rem);
+        letter-spacing: -0.055em;
+        line-height: 1.05;
+      }
+      .intro {
+        margin: 14px 0 30px;
+        color: #697168;
+        line-height: 1.65;
+      }
+      form {
+        display: grid;
+        gap: 19px;
+      }
+      label {
+        display: grid;
+        gap: 8px;
+        font-size: 0.9rem;
+        font-weight: 650;
+      }
+      input {
+        width: 100%;
+        min-height: 50px;
+        padding: 0 14px;
+        border: 1px solid #dce1d8;
+        border-radius: 11px;
+        outline: none;
+        color: inherit;
+        background: #fff;
+        font: inherit;
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
+      }
+      input::placeholder {
+        color: #a0a69c;
+      }
+      input:focus {
+        border-color: #62815a;
+        box-shadow: 0 0 0 3px #62815a22;
+      }
+      button {
+        min-height: 52px;
+        margin-top: 3px;
+        border: 0;
+        border-radius: 11px;
+        color: white;
+        background: #355d3b;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          transform 0.15s;
+      }
+      button:hover {
+        background: #294a2f;
+      }
+      button:active {
+        transform: translateY(1px);
+      }
+      button:disabled {
+        cursor: wait;
+        opacity: 0.65;
+      }
+      .privacy {
+        margin: 17px 0 0;
+        color: #7b8278;
+        font-size: 0.78rem;
+        line-height: 1.55;
+      }
+      .status {
+        min-height: 1.4em;
+        margin: 4px 0 0;
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+      .status[data-kind="success"] {
+        color: #28613a;
+      }
+      .status[data-kind="error"] {
+        color: #a13131;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">A quick introduction</p>
+      <h1>Tell us a little about you.</h1>
+      <p class="intro">
+        Just three small details. We’d love to know what colour you like most.
+      </p>
+
+      <form id="details-form">
+        <label for="name"
+          >Name
+          <input
+            id="name"
+            name="name"
+            type="text"
+            autocomplete="given-name"
+            maxlength="80"
+            placeholder="Your first name"
+            required
+          />
+        </label>
+        <label for="surname"
+          >Surname
+          <input
+            id="surname"
+            name="surname"
+            type="text"
+            autocomplete="family-name"
+            maxlength="80"
+            placeholder="Your surname"
+            required
+          />
+        </label>
+        <label for="favoriteColour"
+          >Favorite colour
+          <input
+            id="favoriteColour"
+            name="favoriteColour"
+            type="text"
+            maxlength="40"
+            placeholder="e.g. forest green"
+            required
+          />
+        </label>
+        <button id="submit-button" type="submit">Send my response</button>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+      </form>
+      <p class="privacy">
+        Your response will be emailed to the form owner and is not saved by this
+        app. Please don’t include sensitive information.
+      </p>
+    </main>
+    <script>
+      const form = document.querySelector("#details-form");
+      const button = document.querySelector("#submit-button");
+      const status = document.querySelector("#status");
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        status.textContent = "";
+        status.dataset.kind = "";
+        button.disabled = true;
+        button.textContent = "Sending…";
+
+        const formData = new FormData(form);
+        const payload = Object.fromEntries(formData.entries());
+
+        try {
+          const response = await fetch("/api/submit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          const result = await response.json();
+          if (!response.ok)
+            throw new Error(result.error || "Something went wrong.");
+          status.textContent = result.message;
+          status.dataset.kind = "success";
+          form.reset();
+        } catch (error) {
+          status.textContent =
+            error.message || "Unable to send your response. Please try again.";
+          status.dataset.kind = "error";
+        } finally {
+          button.disabled = false;
+          button.textContent = "Send my response";
+        }
+      });
+    </script>
+  </body>
+</html>
