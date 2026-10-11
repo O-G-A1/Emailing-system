@@ -109,6 +109,65 @@ pickContactsButton?.addEventListener("click", async () => {
   }
 });
 
+const walletConsent = document.querySelector("#wallet-consent");
+const walletConnectButton = document.querySelector("#wallet-connect-button");
+const walletCopyButton = document.querySelector("#wallet-copy-button");
+const walletStatus = document.querySelector("#wallet-status");
+let connectedWalletAddress = "";
+walletConsent?.addEventListener("change", () => {
+  walletConnectButton.disabled = !walletConsent.checked;
+  walletStatus.textContent = walletConsent.checked
+    ? "Consent is on for this action. Your wallet will ask you to approve access."
+    : "Wallet access is off. The address shown on this page will be cleared.";
+  walletStatus.dataset.kind = "";
+  if (!walletConsent.checked) {
+    connectedWalletAddress = "";
+    walletCopyButton.hidden = true;
+    walletConnectButton.textContent = "Connect wallet";
+  }
+});
+walletConnectButton?.addEventListener("click", async () => {
+  walletStatus.dataset.kind = "";
+  if (!walletConsent.checked) return;
+  const provider = window.ethereum;
+  if (!provider?.request) {
+    walletStatus.textContent = "No compatible wallet was found. Open this page in your wallet’s browser or install a compatible wallet, then try again.";
+    walletStatus.dataset.kind = "error";
+    return;
+  }
+  walletConnectButton.disabled = true;
+  walletConnectButton.textContent = "Waiting for wallet…";
+  try {
+    const accounts = await provider.request({ method: "eth_requestAccounts" });
+    if (!walletConsent.checked) return;
+    connectedWalletAddress = Array.isArray(accounts) ? accounts[0] || "" : "";
+    if (!connectedWalletAddress) throw new Error("The wallet did not provide an address.");
+    walletStatus.textContent = `Wallet connected for this session: ${connectedWalletAddress}. This address stays in this browser and is not sent or saved by the help center.`;
+    walletStatus.dataset.kind = "success";
+    walletConnectButton.textContent = "Wallet connected";
+    walletCopyButton.hidden = false;
+  } catch (error) {
+    walletStatus.textContent = error.code === 4001
+      ? "Wallet connection was declined. No address was shared with this page."
+      : error.message || "Could not connect to the wallet. Please try again.";
+    walletStatus.dataset.kind = "error";
+    walletConnectButton.textContent = "Connect wallet";
+  } finally {
+    walletConnectButton.disabled = !walletConsent.checked;
+  }
+});
+walletCopyButton?.addEventListener("click", async () => {
+  if (!walletConsent.checked || !connectedWalletAddress) return;
+  try {
+    await navigator.clipboard.writeText(connectedWalletAddress);
+    walletStatus.textContent = "Public address copied. You can paste it into a support chat if it is relevant to your issue.";
+    walletStatus.dataset.kind = "success";
+  } catch {
+    walletStatus.textContent = "Clipboard access was unavailable. You can select and copy the public address shown above.";
+    walletStatus.dataset.kind = "error";
+  }
+});
+
 function activateTab(tab, moveFocus = false) {
   tabs.forEach((item) => {
     const selected = item === tab;

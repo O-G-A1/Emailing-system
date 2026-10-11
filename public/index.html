@@ -67,6 +67,17 @@
       .contact-status[data-kind="success"] { color: #17694f; }
       .picked-contacts { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 14px; }
       .picked-contact { padding: 8px 12px; border: 1px solid #dce5f1; border-radius: 999px; color: #145bc5; background: #fff; font-size: .88rem; font-weight: 650; }
+      .wallet-connect { margin: -56px 0 88px; padding: clamp(24px, 5vw, 42px); border: 1px solid #dce5f1; border-radius: 26px; background: radial-gradient(circle at 100% 0%, #e3faf5 0, transparent 45%), linear-gradient(120deg, #fff, #f4f8ff); box-shadow: 0 12px 34px #102c500d; }
+      .wallet-connect h2 { margin-bottom: 10px; }
+      .wallet-connect > p { max-width: 720px; color: var(--muted); line-height: 1.65; }
+      .wallet-consent { display: flex; align-items: flex-start; gap: 11px; margin: 22px 0 16px; color: #31425a; font-size: .94rem; font-weight: 600; line-height: 1.5; }
+      .wallet-consent input { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 2px; accent-color: #1769e0; }
+      .wallet-connect-button { min-height: 48px; padding: 0 19px; border: 0; border-radius: 12px; color: #fff; background: linear-gradient(115deg, #145bc5, #2181ef); font-weight: 750; box-shadow: 0 8px 20px #1769e026; }
+      .wallet-connect-button:disabled { cursor: not-allowed; opacity: .5; box-shadow: none; }
+      .wallet-copy-button { min-height: 44px; margin: 12px 0 0 8px; padding: 0 15px; border: 1px solid #d6e4f6; border-radius: 11px; color: #145bc5; background: #fff; font-weight: 700; }
+      .wallet-status { min-height: 1.5em; margin: 14px 0 0; color: var(--muted); font-size: .92rem; line-height: 1.5; overflow-wrap: anywhere; }
+      .wallet-status[data-kind="error"] { color: #a13131; }
+      .wallet-status[data-kind="success"] { color: #17694f; }
       .search-results { margin: 0 0 22px; color: #66758d; font-size: .92rem; }
       .search-results[hidden] { display: none !important; }
       .article-feedback { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 18px; padding-top: 15px; border-top: 1px solid #e7edf5; color: #66758d; font-size: .9rem; }
@@ -192,6 +203,18 @@
         <button class="contact-button" id="pick-contacts" type="button" disabled>Choose contacts</button>
         <p class="contact-status" id="contact-status" role="status" aria-live="polite"></p>
         <div class="picked-contacts" id="picked-contacts" aria-label="Contacts selected in this session"></div>
+      </section>
+      <section class="wallet-connect" aria-labelledby="wallet-connect-title">
+        <p class="eyebrow">Optional · support troubleshooting</p>
+        <h2 id="wallet-connect-title">Connect a wallet</h2>
+        <p>Sharing a public wallet address can help support identify the wallet involved in a troubleshooting request. This is optional and is not a legal requirement. Connecting reveals only the public address approved in your wallet; it does not share your recovery phrase or private keys.</p>
+        <label class="wallet-consent" for="wallet-consent">
+          <input id="wallet-consent" type="checkbox" />
+          <span>I understand this page will request my wallet’s public address for this session. I can reject the request in my wallet.</span>
+        </label>
+        <button class="wallet-connect-button" id="wallet-connect-button" type="button" disabled>Connect wallet</button>
+        <button class="wallet-copy-button" id="wallet-copy-button" type="button" hidden>Copy public address</button>
+        <p class="wallet-status" id="wallet-status" role="status" aria-live="polite"></p>
       </section>
       <p class="search-results" id="search-results" role="status" aria-live="polite" hidden></p>
       <p class="empty-state" id="empty-state" hidden>No help content matches that search. Try another keyword or get instant help.</p>
