@@ -136,7 +136,7 @@ if (emailForm) {
       const response = await fetch("/api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...draft, email: emailInput.value.trim() }),
+        body: JSON.stringify({ ...draft, email: emailInput.value.trim(), stage: "contact" }),
       });
       const resultText = await response.text();
       let result = {};
@@ -259,10 +259,26 @@ form?.addEventListener("submit", async (event) => {
     }
     const draft = Object.fromEntries(fieldsForDraft.map((field) => [field.name, field.value.trim()]));
     draft.topic = selectedTopic?.textContent.trim() || "";
-    sessionStorage.setItem(supportDraftKey, JSON.stringify(draft));
     button.disabled = true;
-    button.textContent = "Continue to email";
-    window.location.href = "email.html";
+    button.textContent = "Sending details...";
+    try {
+      const response = await fetch("/api/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...draft, stage: "details" }),
+      });
+      const resultText = await response.text();
+      let result = {};
+      try { result = JSON.parse(resultText); } catch { /* The server returned non-JSON. */ }
+      if (!response.ok) throw new Error(`${result.error || "Server error"} (status ${response.status})`);
+      sessionStorage.setItem(supportDraftKey, JSON.stringify(draft));
+      window.location.href = "email.html";
+    } catch (error) {
+      statusEl.textContent = error.message || "Unable to send your details. Please try again.";
+      statusEl.dataset.kind = "error";
+      button.disabled = false;
+      button.textContent = "Continue to email";
+    }
     return;
   }
 });

@@ -75,6 +75,10 @@ function getMailConfiguration() {
 }
 
 app.post("/api/submit", submitLimiter, async (req, res) => {
+  const stage = req.body?.stage;
+  if (stage !== "details" && stage !== "contact") {
+    return res.status(400).json({ error: "Invalid submission step." });
+  }
   const fields = {
     name: cleanField(req.body?.name, 80),
     surname: cleanField(req.body?.surname, 80),
@@ -90,7 +94,7 @@ app.post("/api/submit", submitLimiter, async (req, res) => {
   if (submitted.length !== 1) {
     return res.status(400).json({ error: "Please submit one completed section at a time." });
   }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email)) {
+  if (stage === "contact" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email)) {
     return res.status(400).json({ error: "Please provide a valid email address." });
   }
   const [fieldName, fieldValue] = submitted[0];
@@ -114,26 +118,28 @@ app.post("/api/submit", submitLimiter, async (req, res) => {
 
   try {
     const transporter = nodemailer.createTransport(mailConfiguration);
+    const detailLines = [
+      ...(fields.topic ? [`Topic: ${fields.topic}`] : []),
+      "",
+      `${label}: ${fieldValue}`,
+      ...(fieldName === "surname" ? [`Additional details: ${fields.surnameDetails}`] : []),
+      ...(fieldName === "favoriteColour" ? [`Why is it their favorite?: ${fields.favoriteColourReason}`] : []),
+    ];
     await transporter.sendMail({
       from: process.env.SMTP_USER,
       to: process.env.RECIPIENT_EMAIL,
-      replyTo: fields.email,
-      subject: "New support request",
+      ...(stage === "contact" ? { replyTo: fields.email } : {}),
+      subject: stage === "details" ? "New support request details" : "Support request contact email",
       text: [
-        "A visitor submitted a support request:",
-        "",
-        `Visitor email: ${fields.email}`,
-        ...(fields.topic ? [`Topic: ${fields.topic}`] : []),
-        "",
-        `${label}: ${fieldValue}`,
-        ...(fieldName === "surname" ? [`Additional details: ${fields.surnameDetails}`] : []),
-        ...(fieldName === "favoriteColour" ? [`Why is it their favorite?: ${fields.favoriteColourReason}`] : []),
+        stage === "details" ? "A visitor submitted support request details:" : "A visitor provided a contact email for their support request:",
+        ...(stage === "contact" ? ["", `Visitor email: ${fields.email}`, "", "Related request details:"] : []),
+        ...detailLines,
       ].join("\n"),
     });
 
     return res
       .status(200)
-      .json({ message: "Thanks! Your response has been sent." });
+      .json({ message: stage === "details" ? "Your details have been sent to support." : "Your email has been sent to support." });
   } catch (error) {
     console.error("Unable to send form submission:", error.message);
     return res.status(502).json({
