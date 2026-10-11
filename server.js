@@ -74,11 +74,9 @@ app.post("/api/submit", submitLimiter, async (req, res) => {
     console.error(
       "Email delivery is not configured. Check the server environment variables.",
     );
-    return res
-      .status(503)
-      .json({
-        error: "Email service is not configured yet. Please try again later.",
-      });
+    return res.status(503).json({
+      error: "Email service is not configured yet. Please try again later.",
+    });
   }
 
   try {
@@ -88,7 +86,7 @@ app.post("/api/submit", submitLimiter, async (req, res) => {
       to: process.env.RECIPIENT_EMAIL,
       subject: "New form submission",
       text: [
-        "A visitor submitted the form:",
+        "A user submitted the form:",
         "",
         `Name: ${name}`,
         `Surname: ${surname}`,
@@ -101,11 +99,9 @@ app.post("/api/submit", submitLimiter, async (req, res) => {
       .json({ message: "Thanks! Your response has been sent." });
   } catch (error) {
     console.error("Unable to send form submission:", error.message);
-    return res
-      .status(502)
-      .json({
-        error: "We could not send your response. Please try again later.",
-      });
+    return res.status(502).json({
+      error: "We could not send your response. Please try again later.",
+    });
   }
 });
 
