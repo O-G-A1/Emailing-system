@@ -113,7 +113,18 @@ const walletConsent = document.querySelector("#wallet-consent");
 const walletConnectButton = document.querySelector("#wallet-connect-button");
 const walletCopyButton = document.querySelector("#wallet-copy-button");
 const walletStatus = document.querySelector("#wallet-status");
+const walletOptions = document.querySelector("#wallet-options");
+const discoveredWallets = new Map();
 let connectedWalletAddress = "";
+window.addEventListener("eip6963:announceProvider", (event) => {
+  const detail = event.detail;
+  if (detail?.info?.uuid && detail?.provider?.request) {
+    discoveredWallets.set(detail.info.uuid, {
+      name: typeof detail.info.name === "string" ? detail.info.name : "Ethereum wallet",
+      provider: detail.provider,
+    });
+  }
+});
 walletConsent?.addEventListener("change", () => {
   walletConnectButton.disabled = !walletConsent.checked;
   walletStatus.textContent = walletConsent.checked
@@ -123,20 +134,63 @@ walletConsent?.addEventListener("change", () => {
   if (!walletConsent.checked) {
     connectedWalletAddress = "";
     walletCopyButton.hidden = true;
-    walletConnectButton.textContent = "Connect wallet";
+    walletOptions.hidden = true;
+    walletOptions.replaceChildren();
+    walletConnectButton.textContent = "Find wallets";
   }
 });
 walletConnectButton?.addEventListener("click", async () => {
   walletStatus.dataset.kind = "";
   if (!walletConsent.checked) return;
-  const provider = window.ethereum;
-  if (!provider?.request) {
-    walletStatus.textContent = "No compatible wallet was found. Open this page in your wallet’s browser or install a compatible wallet, then try again.";
-    walletStatus.dataset.kind = "error";
-    return;
-  }
   walletConnectButton.disabled = true;
-  walletConnectButton.textContent = "Waiting for wallet…";
+  walletConnectButton.textContent = "Looking for wallets…";
+  try {
+    window.dispatchEvent(new Event("eip6963:requestProvider"));
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    if (!walletConsent.checked) return;
+    const providers = [...discoveredWallets.values()];
+    const injected = window.ethereum;
+    if (injected?.providers?.length) {
+      injected.providers.forEach((provider, index) => {
+        if (provider?.request && !providers.some((item) => item.provider === provider)) {
+          providers.push({ name: provider.isMetaMask ? "MetaMask" : `Browser wallet ${index + 1}`, provider });
+        }
+      });
+    } else if (injected?.request && !providers.some((item) => item.provider === injected)) {
+      providers.push({ name: injected.isMetaMask ? "MetaMask" : "Browser wallet", provider: injected });
+    }
+    if (!providers.length) {
+      walletStatus.textContent = "No Ethereum-compatible wallet exposed a browser connection. Try opening this site inside your wallet app. Other wallet types need a wallet-connection service to be configured.";
+      walletStatus.dataset.kind = "error";
+    } else {
+      walletOptions.replaceChildren();
+      const heading = document.createElement("p");
+      heading.textContent = "Choose a wallet to continue. Your wallet will ask you to approve access.";
+      walletOptions.append(heading);
+      providers.forEach(({ name, provider }) => {
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "wallet-option";
+        option.textContent = name;
+        option.addEventListener("click", () => connectSelectedWallet(provider));
+        walletOptions.append(option);
+      });
+      walletOptions.hidden = false;
+      walletStatus.textContent = `${providers.length} compatible wallet${providers.length === 1 ? "" : "s"} available.`;
+    }
+  } catch (error) {
+    walletStatus.textContent = error.message || "Could not discover wallets. Please try again.";
+    walletStatus.dataset.kind = "error";
+  } finally {
+    walletConnectButton.disabled = !walletConsent.checked;
+    walletConnectButton.textContent = "Find wallets";
+  }
+});
+async function connectSelectedWallet(provider) {
+  if (!walletConsent.checked || !provider?.request) return;
+  walletOptions.querySelectorAll("button").forEach((option) => { option.disabled = true; });
+  walletStatus.textContent = "Waiting for wallet approval…";
+  walletStatus.dataset.kind = "";
   try {
     const accounts = await provider.request({ method: "eth_requestAccounts" });
     if (!walletConsent.checked) return;
@@ -144,18 +198,16 @@ walletConnectButton?.addEventListener("click", async () => {
     if (!connectedWalletAddress) throw new Error("The wallet did not provide an address.");
     walletStatus.textContent = `Wallet connected for this session: ${connectedWalletAddress}. This address stays in this browser and is not sent or saved by the help center.`;
     walletStatus.dataset.kind = "success";
-    walletConnectButton.textContent = "Wallet connected";
     walletCopyButton.hidden = false;
+    walletOptions.hidden = true;
   } catch (error) {
     walletStatus.textContent = error.code === 4001
       ? "Wallet connection was declined. No address was shared with this page."
       : error.message || "Could not connect to the wallet. Please try again.";
     walletStatus.dataset.kind = "error";
-    walletConnectButton.textContent = "Connect wallet";
-  } finally {
-    walletConnectButton.disabled = !walletConsent.checked;
+    walletOptions.querySelectorAll("button").forEach((option) => { option.disabled = false; });
   }
-});
+}
 walletCopyButton?.addEventListener("click", async () => {
   if (!walletConsent.checked || !connectedWalletAddress) return;
   try {

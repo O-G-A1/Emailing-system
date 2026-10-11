@@ -78,6 +78,10 @@
       .wallet-status { min-height: 1.5em; margin: 14px 0 0; color: var(--muted); font-size: .92rem; line-height: 1.5; overflow-wrap: anywhere; }
       .wallet-status[data-kind="error"] { color: #a13131; }
       .wallet-status[data-kind="success"] { color: #17694f; }
+      .wallet-options { display: grid; gap: 9px; max-width: 420px; margin-top: 16px; }
+      .wallet-option { display: flex; min-height: 48px; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 13px; border: 1px solid #dce5f1; border-radius: 12px; color: #172338; background: #fff; text-align: left; font-weight: 700; }
+      .wallet-option:hover, .wallet-option:focus-visible { border-color: #8ab4eb; background: #f5f9ff; outline: none; }
+      .wallet-option span { color: #1769e0; font-size: .8rem; }
       .search-results { margin: 0 0 22px; color: #66758d; font-size: .92rem; }
       .search-results[hidden] { display: none !important; }
       .article-feedback { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 18px; padding-top: 15px; border-top: 1px solid #e7edf5; color: #66758d; font-size: .9rem; }
@@ -207,13 +211,14 @@
       <section class="wallet-connect" aria-labelledby="wallet-connect-title">
         <p class="eyebrow">Optional · support troubleshooting</p>
         <h2 id="wallet-connect-title">Connect a wallet</h2>
-        <p>Sharing a public wallet address can help support identify the wallet involved in a troubleshooting request. This is optional and is not a legal requirement. Connecting reveals only the public address approved in your wallet; it does not share your recovery phrase or private keys.</p>
+        <p>Sharing a public wallet address can help support identify the wallet involved in a troubleshooting request. This is optional and is not a legal requirement. The chooser can list Ethereum-compatible wallets exposed by your browser; it cannot inspect all apps installed on your device. Connecting reveals only the public address approved in your wallet, never a recovery phrase or private key.</p>
         <label class="wallet-consent" for="wallet-consent">
           <input id="wallet-consent" type="checkbox" />
           <span>I understand this page will request my wallet’s public address for this session. I can reject the request in my wallet.</span>
         </label>
-        <button class="wallet-connect-button" id="wallet-connect-button" type="button" disabled>Connect wallet</button>
+        <button class="wallet-connect-button" id="wallet-connect-button" type="button" disabled>Find wallets</button>
         <button class="wallet-copy-button" id="wallet-copy-button" type="button" hidden>Copy public address</button>
+        <div class="wallet-options" id="wallet-options" aria-label="Available wallet providers" hidden></div>
         <p class="wallet-status" id="wallet-status" role="status" aria-live="polite"></p>
       </section>
       <p class="search-results" id="search-results" role="status" aria-live="polite" hidden></p>
@@ -222,6 +227,6 @@
     <footer>Need a hand? Use the Support button to reach us.</footer>
 
     <button class="chat-close" id="chat-close" type="button" aria-label="Close chat panel" hidden><span aria-hidden="true">×</span>Close chat</button>
-    <script src="script.js?v=8" defer></script>
+    <script src="script.js?v=9" defer></script>
   </body>
 </html>
