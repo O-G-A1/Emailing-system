@@ -197,12 +197,12 @@
     <script>
       const form = document.querySelector("#details-form");
       const button = document.querySelector("#submit-button");
-      const status = document.querySelector("#status");
+      const statusEl = document.querySelector("#status");
 
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
-        status.textContent = "";
-        status.dataset.kind = "";
+        statusEl.textContent = "";
+        statusEl.dataset.kind = "";
         button.disabled = true;
         button.textContent = "Sending…";
 
@@ -227,14 +227,14 @@
               `${result.error || "Server error"} (status ${response.status})`,
             );
           }
-          status.textContent =
+          statusEl.textContent =
             result.message || `Sent (status ${response.status})`;
-          status.dataset.kind = "success";
+          statusEl.dataset.kind = "success";
           form.reset();
         } catch (error) {
-          status.textContent =
+          statusEl.textContent =
             error.message || "Unable to send your response. Please try again.";
-          status.dataset.kind = "error";
+          statusEl.dataset.kind = "error";
         } finally {
           button.disabled = false;
           button.textContent = "Send my response";
