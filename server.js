@@ -9,7 +9,21 @@ const path = require("node:path");
 const app = express();
 const port = Number(process.env.PORT) || 3000;
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        scriptSrc: ["'self'", "*.tawk.to", "cdn.jsdelivr.net"],
+        styleSrc: ["'self'", "https:", "'unsafe-inline'", "*.tawk.to", "fonts.googleapis.com", "cdn.jsdelivr.net"],
+        frameSrc: ["'self'", "*.tawk.to"],
+        fontSrc: ["'self'", "https:", "data:", "*.tawk.to", "fonts.gstatic.com"],
+        imgSrc: ["'self'", "data:", "*.tawk.to", "cdn.jsdelivr.net", "tawk.link", "s3.amazonaws.com"],
+        connectSrc: ["'self'", "*.tawk.to", "wss://*.tawk.to", "https://*.tawk.help"],
+        formAction: ["'self'", "*.tawk.to"],
+      },
+    },
+  }),
+);
 app.use(express.json({ limit: "10kb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
