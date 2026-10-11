@@ -60,6 +60,55 @@ document.querySelector("#chat-close")?.addEventListener("click", () => {
   if (typeof Tawk_API.minimize === "function") Tawk_API.minimize();
 });
 
+const contactConsent = document.querySelector("#contact-consent");
+const pickContactsButton = document.querySelector("#pick-contacts");
+const contactStatus = document.querySelector("#contact-status");
+const pickedContacts = document.querySelector("#picked-contacts");
+contactConsent?.addEventListener("change", () => {
+  pickContactsButton.disabled = !contactConsent.checked;
+  contactStatus.textContent = contactConsent.checked
+    ? "Consent is on for this action. You’ll still choose each contact in your device picker."
+    : "Contact access is off.";
+  contactStatus.dataset.kind = "";
+  pickedContacts.replaceChildren();
+});
+pickContactsButton?.addEventListener("click", async () => {
+  contactStatus.dataset.kind = "";
+  pickedContacts.replaceChildren();
+  if (!contactConsent.checked) return;
+  if (!navigator.contacts?.select) {
+    contactStatus.textContent = "Your browser does not support the contact picker. Try a supported mobile browser over HTTPS, or continue without contact discovery.";
+    contactStatus.dataset.kind = "error";
+    return;
+  }
+  pickContactsButton.disabled = true;
+  pickContactsButton.textContent = "Opening contacts…";
+  try {
+    const contacts = await navigator.contacts.select(["name", "email", "tel"], { multiple: true });
+    if (!contactConsent.checked) return;
+    if (!contacts.length) {
+      contactStatus.textContent = "No contacts were selected. Nothing was shared with the site.";
+      return;
+    }
+    for (const contact of contacts) {
+      const chip = document.createElement("span");
+      chip.className = "picked-contact";
+      chip.textContent = contact.name?.[0] || "Selected contact";
+      pickedContacts.append(chip);
+    }
+    contactStatus.textContent = `${contacts.length} contact${contacts.length === 1 ? "" : "s"} selected. They remain in this browser session and have not been sent to the server.`;
+    contactStatus.dataset.kind = "success";
+  } catch (error) {
+    contactStatus.textContent = error.name === "AbortError"
+      ? "Contact selection was cancelled. No contacts were shared."
+      : "Could not open contacts. Check browser support and try again.";
+    contactStatus.dataset.kind = "error";
+  } finally {
+    pickContactsButton.disabled = !contactConsent.checked;
+    pickContactsButton.textContent = "Choose contacts";
+  }
+});
+
 function activateTab(tab, moveFocus = false) {
   tabs.forEach((item) => {
     const selected = item === tab;

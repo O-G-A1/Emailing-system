@@ -55,6 +55,18 @@
       .topic-actions { width: 100%; margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
       .topic-help-button { min-height: 40px; padding: 0 13px; border: 1px solid #dce5f1; border-radius: 11px; color: #1769e0; background: #fff; font: inherit; font-size: .88rem; font-weight: 700; cursor: pointer; }
       .topic-help-button:hover { border-color: #b9d4f5; background: #f7faff; }
+      .contact-discovery { margin: 0 0 88px; padding: clamp(24px, 5vw, 42px); border: 1px solid #dce5f1; border-radius: 26px; background: radial-gradient(circle at 100% 0%, #e3faf5 0, transparent 45%), linear-gradient(120deg, #fff, #f4f8ff); box-shadow: 0 12px 34px #102c500d; }
+      .contact-discovery h2 { margin-bottom: 10px; }
+      .contact-discovery > p { max-width: 720px; color: var(--muted); line-height: 1.65; }
+      .contact-consent { display: flex; align-items: flex-start; gap: 11px; margin: 22px 0 16px; color: #31425a; font-size: .94rem; font-weight: 600; line-height: 1.5; }
+      .contact-consent input { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 2px; accent-color: #1769e0; }
+      .contact-button { min-height: 48px; padding: 0 19px; border: 0; border-radius: 12px; color: #fff; background: linear-gradient(115deg, #145bc5, #2181ef); font-weight: 750; box-shadow: 0 8px 20px #1769e026; }
+      .contact-button:disabled { cursor: not-allowed; opacity: .5; box-shadow: none; }
+      .contact-status { min-height: 1.5em; margin: 14px 0 0; color: var(--muted); font-size: .92rem; line-height: 1.5; }
+      .contact-status[data-kind="error"] { color: #a13131; }
+      .contact-status[data-kind="success"] { color: #17694f; }
+      .picked-contacts { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 14px; }
+      .picked-contact { padding: 8px 12px; border: 1px solid #dce5f1; border-radius: 999px; color: #145bc5; background: #fff; font-size: .88rem; font-weight: 650; }
       .search-results { margin: 0 0 22px; color: #66758d; font-size: .92rem; }
       .search-results[hidden] { display: none !important; }
       .article-feedback { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 18px; padding-top: 15px; border-top: 1px solid #e7edf5; color: #66758d; font-size: .9rem; }
@@ -169,12 +181,24 @@
           <article class="topic-card" data-topic-card><h3>Onchain</h3><p>Getting started, wallet management, deposits, and withdrawals.</p><div class="topic-actions"><span class="topic-tag">Getting started</span><button class="topic-help-button" type="button" data-open-chat>Ask support</button></div></article>
         </div>
       </section>
+      <section class="contact-discovery" aria-labelledby="contact-discovery-title">
+        <p class="eyebrow">Optional · you’re in control</p>
+        <h2 id="contact-discovery-title">Find people you know</h2>
+        <p>Select contacts from your device to check for connections. Your browser will only share the contacts you select. Contact matching is not connected yet, so selected contact data stays in this browser and isn’t saved or emailed.</p>
+        <label class="contact-consent" for="contact-consent">
+          <input id="contact-consent" type="checkbox" />
+          <span>I agree to open my device’s contact picker and share the contacts I choose with this page for this session.</span>
+        </label>
+        <button class="contact-button" id="pick-contacts" type="button" disabled>Choose contacts</button>
+        <p class="contact-status" id="contact-status" role="status" aria-live="polite"></p>
+        <div class="picked-contacts" id="picked-contacts" aria-label="Contacts selected in this session"></div>
+      </section>
       <p class="search-results" id="search-results" role="status" aria-live="polite" hidden></p>
       <p class="empty-state" id="empty-state" hidden>No help content matches that search. Try another keyword or get instant help.</p>
     </main>
     <footer>Need a hand? Use the Support button to reach us.</footer>
 
     <button class="chat-close" id="chat-close" type="button" aria-label="Close chat panel" hidden><span aria-hidden="true">×</span>Close chat</button>
-    <script src="script.js?v=7" defer></script>
+    <script src="script.js?v=8" defer></script>
   </body>
 </html>
