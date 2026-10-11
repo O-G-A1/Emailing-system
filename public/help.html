@@ -19,11 +19,13 @@
       .eyebrow { margin: 34px 0 10px; color: #64805d; font-size: .76rem; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
       h1 { margin: 0; color: #233626; font-size: clamp(2rem, 6vw, 3rem); letter-spacing: -.055em; line-height: 1.08; }
       .intro { margin: 13px 0 28px; color: #697168; line-height: 1.6; }
-      .choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-      .choice { display: flex; width: 100%; min-width: 0; min-height: 88px; align-items: center; justify-content: space-between; gap: 14px; padding: 18px; border: 1px solid #e1e6dd; border-radius: 15px; background: #fff; color: #2b352a; font: inherit; text-align: left; cursor: pointer; transition: border-color .15s, transform .15s, box-shadow .15s; }
-      .choice:hover, .choice:focus-visible { border-color: #93a98d; box-shadow: 0 8px 24px #2231200d; transform: translateY(-1px); outline: none; }
-      .choice-copy { min-width: 0; display: grid; gap: 5px; } .choice-copy strong { font-size: 1rem; } .choice-copy span { color: #737b70; font-size: .9rem; line-height: 1.45; }
-      .choice-icon { flex: 0 0 38px; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; color: #355d3b; background: #eef3ec; font-size: 1.1rem; }
+      .choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+      .choice { position: relative; display: flex; width: 100%; min-width: 0; min-height: 150px; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 22px 12px; border: 1px solid #e4e8f0; border-radius: 24px; background: #fff; color: #111827; font: inherit; text-align: center; cursor: pointer; transition: border-color .18s, transform .18s, box-shadow .18s; }
+      .choice:hover, .choice:focus-visible { border-color: #8b45e8; box-shadow: 0 10px 28px #7136ca1c; transform: translateY(-2px); outline: none; }
+      .choice:active { transform: translateY(0); }
+      .choice-copy { min-width: 0; display: grid; gap: 5px; } .choice-copy strong { font-size: 1.1rem; font-weight: 550; } .choice-copy span { display: none; color: #737b70; font-size: .9rem; line-height: 1.45; }
+      .choice-icon { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid #dce8f5; border-radius: 15px; color: #1769e0; background: linear-gradient(145deg, #eef5ff, #e8faf6); box-shadow: inset 0 1px #fff; }
+      .choice-icon svg { display: block; width: 25px; height: 25px; stroke: currentColor; }
       .form-view { margin-top: 30px; padding: clamp(22px, 5vw, 34px); border: 1px solid #e1e6dd; border-radius: 18px; background: #fff; }
       .form-view[hidden], .choices[hidden], .choice-step[hidden] { display: none !important; }
       .selected-topic { display: inline-block; margin: 12px 0 6px; padding: 6px 10px; border-radius: 999px; color: #355d3b; background: #eef3ec; font-size: .82rem; font-weight: 700; }
@@ -56,17 +58,19 @@
       .eyebrow { color: #2876d9; }
       .eyebrow::before { content: ""; display: inline-block; width: 7px; height: 7px; margin: 0 8px 1px 0; border-radius: 50%; background: #37d6b0; box-shadow: 0 0 0 4px #37d6b01f; vertical-align: middle; }
       h1, h2 { color: var(--navy); }
-      .choice { border-color: #e0e7f0; box-shadow: 0 4px 16px #1b35580a; }
-      .choice:hover, .choice:focus-visible { border-color: #b9d4f5; box-shadow: 0 10px 26px #1769e014; }
-      .choice-icon, .selected-topic { color: #1769e0; background: #e8f2ff; }
+      .choice { border-color: #e7e8ee; box-shadow: 0 4px 16px #1b355808; }
+      .choice:hover, .choice:focus-visible { border-color: #78a9e8; box-shadow: 0 10px 26px #1769e01c; }
+      .choice-icon { color: #1769e0; }
+      .choice:hover .choice-icon, .choice:focus-visible .choice-icon { color: #087f72; border-color: #a9e2d6; background: linear-gradient(145deg, #e8f2ff, #ddf8ef); }
+      .selected-topic { color: #145bc5; background: #e8f2ff; }
       .form-view { border-color: #e0e7f0; box-shadow: 0 12px 34px #1b35580d; }
       .tab[aria-selected="true"] { color: #145bc5; }
       .form-input:focus { border-color: #5797f1; box-shadow: 0 0 0 4px #1769e01c; }
       .send-button { background: linear-gradient(115deg, #145bc5, #2181ef); box-shadow: 0 10px 24px #1769e026; }
       .send-button:hover { background: linear-gradient(115deg, #104ca8, #1769e0); }
       .form-intro, .privacy { color: var(--muted); }
-      @media (max-width: 620px) { .topbar { min-height: 68px; padding-inline: 18px; } main { width: calc(100% - 32px); padding: 36px 0 56px; } .eyebrow { margin-top: 28px; } .choices { grid-template-columns: minmax(0, 1fr); gap: 10px; } .choice { min-height: 76px; padding: 15px 16px; } .choice-copy span { font-size: .88rem; } .form-view { margin-top: 22px; } }
-      @media (max-width: 360px) { .topbar { padding-inline: 12px; } main { width: calc(100% - 24px); padding-top: 28px; } h1 { font-size: clamp(1.8rem, 9vw, 2.25rem); } .intro { font-size: .94rem; } .choice { gap: 10px; padding: 13px; } .choice-icon { flex-basis: 34px; width: 34px; height: 34px; } .form-view { padding: 18px 14px; } .tabs { gap: 3px; padding: 4px; } .tab { min-height: 44px; font-size: .84rem; } }
+      @media (max-width: 620px) { .topbar { min-height: 68px; padding-inline: 18px; } main { width: calc(100% - 32px); padding: 36px 0 56px; } .eyebrow { margin-top: 28px; } .choices { gap: 12px; } .choice { min-height: 126px; padding: 16px 8px; border-radius: 20px; } .choice-copy strong { font-size: 1rem; } .choice-icon { width: 42px; height: 42px; } .form-view { margin-top: 22px; } }
+      @media (max-width: 360px) { .topbar { padding-inline: 12px; } main { width: calc(100% - 24px); padding-top: 28px; } h1 { font-size: clamp(1.8rem, 9vw, 2.25rem); } .intro { font-size: .94rem; } .choices { gap: 9px; } .choice { min-height: 112px; gap: 8px; padding: 12px 5px; border-radius: 17px; } .choice-copy strong { font-size: .9rem; } .choice-icon { width: 38px; height: 38px; } .form-view { padding: 18px 14px; } .tabs { gap: 3px; padding: 4px; } .tab { min-height: 44px; font-size: .84rem; } }
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
     </style>
   </head>
@@ -88,6 +92,21 @@
           <button class="choice" type="button" data-topic="Feedback and suggestions"><span class="choice-copy"><strong>Feedback and suggestions</strong><span>Share an idea or tell us how we can improve</span></span><span class="choice-icon" aria-hidden="true">+</span></button>
           <button class="choice" type="button" data-topic="Other"><span class="choice-copy"><strong>Other</strong><span>Get help with anything not listed above</span></span><span class="choice-icon" aria-hidden="true">?</span></button>
         </div>
+        <section id="other-issues" aria-labelledby="other-issues-title" hidden>
+          <h2 id="other-issues-title" style="margin:28px 0 16px">More issues</h2>
+          <p class="intro">Choose the issue that best matches what you need help with.</p>
+          <div class="choices" id="other-issue-choices">
+            <button class="choice" type="button" data-topic="Login and access"><span class="choice-icon" aria-hidden="true">●</span><span class="choice-copy"><strong>Login and access</strong></span></button>
+            <button class="choice" type="button" data-topic="Payments and billing"><span class="choice-icon" aria-hidden="true">$</span><span class="choice-copy"><strong>Payments and billing</strong></span></button>
+            <button class="choice" type="button" data-topic="App is slow or unresponsive"><span class="choice-icon" aria-hidden="true">⌁</span><span class="choice-copy"><strong>App is slow or unresponsive</strong></span></button>
+            <button class="choice" type="button" data-topic="Missing information"><span class="choice-icon" aria-hidden="true">▤</span><span class="choice-copy"><strong>Missing information</strong></span></button>
+            <button class="choice" type="button" data-topic="Verification"><span class="choice-icon" aria-hidden="true">✓</span><span class="choice-copy"><strong>Verification</strong></span></button>
+            <button class="choice" type="button" data-topic="Security concern"><span class="choice-icon" aria-hidden="true">⌑</span><span class="choice-copy"><strong>Security concern</strong></span></button>
+            <button class="choice" type="button" data-topic="Feature request"><span class="choice-icon" aria-hidden="true">+</span><span class="choice-copy"><strong>Feature request</strong></span></button>
+            <button class="choice" type="button" data-topic="Something not listed"><span class="choice-icon" aria-hidden="true">…</span><span class="choice-copy"><strong>Something not listed</strong></span></button>
+          </div>
+          <button class="change-topic" id="back-to-main-issues" type="button">← Back to all issues</button>
+        </section>
       </section>
       <section class="form-view" id="form-view" aria-labelledby="form-title" hidden>
         <span class="selected-topic" id="selected-topic"></span>

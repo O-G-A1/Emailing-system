@@ -97,6 +97,30 @@ const emailStep = document.querySelector("#email-step");
 const missingRequest = document.querySelector("#missing-request");
 const supportDraftKey = "helpCenterSupportRequest";
 
+const issueIconPaths = {
+  "Account and profile": '<circle cx="12" cy="8" r="3.5"/><path d="M5 20v-1a7 7 0 0 1 14 0v1z"/><path d="m17 7 2 2 4-4"/>',
+  "Using the service": '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',
+  "Something else": '<path d="M4 7h5l3 5 4-7h4M4 17h5l3-5 4 7h4"/><path d="m18 4 3 1-1 3M18 20l3-1-1-3"/>',
+  "Technical issue": '<path d="M14 6a5 5 0 0 0-6 6l-5 5a2 2 0 0 0 3 3l5-5a5 5 0 0 0 6-6l-3 3-3-1-1-3z"/><path d="m17 15 4 4M19 13l2-2"/>',
+  "Email and notifications": '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/><circle cx="19" cy="5" r="3" fill="currentColor" stroke="white"/>',
+  "Privacy and information": '<path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/><path d="m9 12 2 2 4-4"/>',
+  "Feedback and suggestions": '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L9 17l-4 1 1-4z"/><path d="m14 6 4 4"/>',
+  "Other": '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+  "Login and access": '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3M12 14v3"/>',
+  "Payments and billing": '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h3"/>',
+  "App is slow or unresponsive": '<path d="M12 3v3M12 18v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1"/><circle cx="12" cy="12" r="5"/>',
+  "Missing information": '<path d="M4 4h16v16H4zM8 9h8M8 13h8M8 17h5"/><path d="M17 3v4m-2-2h4"/>',
+  "Verification": '<circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/>',
+  "Security concern": '<path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/><path d="M12 8v4m0 4h.01"/>',
+  "Feature request": '<path d="M12 5v14M5 12h14"/><circle cx="12" cy="12" r="9"/>',
+  "Something not listed": '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+};
+document.querySelectorAll(".choice").forEach((choice) => {
+  const icon = choice.querySelector(".choice-icon");
+  const iconPath = issueIconPaths[choice.dataset.topic];
+  if (icon && iconPath) icon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${iconPath}</svg>`;
+});
+
 if (emailForm) {
   let draft = null;
   try { draft = JSON.parse(sessionStorage.getItem(supportDraftKey) || "null"); } catch { draft = null; }
@@ -156,7 +180,23 @@ if (emailForm) {
   });
 }
 
-document.querySelectorAll(".choice").forEach((choice) => {
+const otherIssues = document.querySelector("#other-issues");
+document.querySelectorAll("#help-choices .choice").forEach((choice) => {
+  choice.addEventListener("click", () => {
+    if (choice.dataset.topic === "Other") {
+      document.querySelector("#help-choices").hidden = true;
+      otherIssues.hidden = false;
+      document.querySelector("#other-issues-title").scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    selectedTopic.textContent = choice.dataset.topic;
+    choiceStep.hidden = true;
+    formView.hidden = false;
+    formView.scrollIntoView({ behavior: "smooth", block: "start" });
+    formView.querySelector("input").focus({ preventScroll: true });
+  });
+});
+document.querySelectorAll("#other-issue-choices .choice").forEach((choice) => {
   choice.addEventListener("click", () => {
     selectedTopic.textContent = choice.dataset.topic;
     choiceStep.hidden = true;
@@ -164,6 +204,10 @@ document.querySelectorAll(".choice").forEach((choice) => {
     formView.scrollIntoView({ behavior: "smooth", block: "start" });
     formView.querySelector("input").focus({ preventScroll: true });
   });
+});
+document.querySelector("#back-to-main-issues")?.addEventListener("click", () => {
+  otherIssues.hidden = true;
+  document.querySelector("#help-choices").hidden = false;
 });
 document.querySelector("#change-topic")?.addEventListener("click", () => {
   formView.hidden = true;
