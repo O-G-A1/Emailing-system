@@ -15,13 +15,17 @@ module.exports = async (req, res) => {
   }
 
   const body = req.body || {};
-  const name = cleanField(body.name, 80);
-  const surname = cleanField(body.surname, 80);
-  const favoriteColour = cleanField(body.favoriteColour, 40);
-
-  if (!name || !surname || !favoriteColour) {
-    return res.status(400).json({ error: "Please complete all three fields." });
+  const fields = {
+    name: cleanField(body.name, 80),
+    surname: cleanField(body.surname, 80),
+    favoriteColour: cleanField(body.favoriteColour, 40),
+  };
+  const submitted = Object.entries(fields).filter(([, value]) => value);
+  if (submitted.length !== 1) {
+    return res.status(400).json({ error: "Please submit one field at a time." });
   }
+  const [fieldName, fieldValue] = submitted[0];
+  const label = fieldName === "favoriteColour" ? "Favorite colour" : fieldName === "name" ? "Name" : "Surname";
 
   const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, RECIPIENT_EMAIL } =
     process.env;
@@ -57,9 +61,7 @@ module.exports = async (req, res) => {
       text: [
         "A user submitted the form:",
         "",
-        `Name: ${name}`,
-        `Surname: ${surname}`,
-        `Favorite colour: ${favoriteColour}`,
+        `${label}: ${fieldValue}`,
       ].join("\n"),
     });
 

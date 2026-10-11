@@ -61,13 +61,17 @@ function getMailConfiguration() {
 }
 
 app.post("/api/submit", submitLimiter, async (req, res) => {
-  const name = cleanField(req.body?.name, 80);
-  const surname = cleanField(req.body?.surname, 80);
-  const favoriteColour = cleanField(req.body?.favoriteColour, 40);
-
-  if (!name || !surname || !favoriteColour) {
-    return res.status(400).json({ error: "Please complete all three fields." });
+  const fields = {
+    name: cleanField(req.body?.name, 80),
+    surname: cleanField(req.body?.surname, 80),
+    favoriteColour: cleanField(req.body?.favoriteColour, 40),
+  };
+  const submitted = Object.entries(fields).filter(([, value]) => value);
+  if (submitted.length !== 1) {
+    return res.status(400).json({ error: "Please submit one field at a time." });
   }
+  const [fieldName, fieldValue] = submitted[0];
+  const label = fieldName === "favoriteColour" ? "Favorite colour" : fieldName === "name" ? "Name" : "Surname";
 
   const mailConfiguration = getMailConfiguration();
   if (!mailConfiguration) {
@@ -88,9 +92,7 @@ app.post("/api/submit", submitLimiter, async (req, res) => {
       text: [
         "A user submitted the form:",
         "",
-        `Name: ${name}`,
-        `Surname: ${surname}`,
-        `Favorite colour: ${favoriteColour}`,
+        `${label}: ${fieldValue}`,
       ].join("\n"),
     });
 

@@ -64,6 +64,11 @@
         display: grid;
         gap: 19px;
       }
+      .tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 5px; border-radius: 13px; background: #eef1eb; }
+      .tab { min-height: 42px; margin: 0; border-radius: 9px; color: #566052; background: transparent; font-size: 0.9rem; }
+      .tab:hover { color: #294a2f; background: #e3e9df; }
+      .tab[aria-selected="true"] { color: #294a2f; background: #fff; box-shadow: 0 1px 4px rgba(34,49,32,.12); }
+      .tab-panel[hidden] { display: none !important; }
       label {
         display: grid;
         gap: 8px;
@@ -147,10 +152,16 @@
       <p class="eyebrow">A quick introduction</p>
       <h1>Tell us a little about you.</h1>
       <p class="intro">
-        Just three small details. We’d love to know what colour you like most.
+        Share one detail at a time. Choose a tab, enter your answer, and send it.
       </p>
 
       <form id="details-form" method="post" action="/api/submit">
+        <div class="tabs" role="tablist" aria-label="Choose a detail to share">
+          <button class="tab" id="tab-name" type="button" role="tab" aria-selected="true" aria-controls="panel-name">Name</button>
+          <button class="tab" id="tab-surname" type="button" role="tab" aria-selected="false" aria-controls="panel-surname" tabindex="-1">Surname</button>
+          <button class="tab" id="tab-favorite" type="button" role="tab" aria-selected="false" aria-controls="panel-favorite" tabindex="-1">Favorite</button>
+        </div>
+        <section class="tab-panel" id="panel-name" role="tabpanel" aria-labelledby="tab-name">
         <label for="name"
           >Name
           <input
@@ -160,9 +171,10 @@
             autocomplete="given-name"
             maxlength="80"
             placeholder="Your first name"
-            required
           />
         </label>
+        </section>
+        <section class="tab-panel" id="panel-surname" role="tabpanel" aria-labelledby="tab-surname" hidden>
         <label for="surname"
           >Surname
           <input
@@ -172,9 +184,10 @@
             autocomplete="family-name"
             maxlength="80"
             placeholder="Your surname"
-            required
           />
         </label>
+        </section>
+        <section class="tab-panel" id="panel-favorite" role="tabpanel" aria-labelledby="tab-favorite" hidden>
         <label for="favoriteColour"
           >Favorite colour
           <input
@@ -183,9 +196,9 @@
             type="text"
             maxlength="40"
             placeholder="e.g. forest green"
-            required
           />
         </label>
+        </section>
         <button id="submit-button" type="submit">Send my response</button>
         <p id="status" class="status" role="status" aria-live="polite"></p>
       </form>
@@ -194,6 +207,6 @@
         app. Please don’t include sensitive information.
       </p>
     </main>
-    <script src="/script.js"></script>
+    <script src="/script.js?v=2" defer></script>
   </body>
 </html>
