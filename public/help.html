@@ -35,6 +35,8 @@
       .tab-panel { margin-top: 18px; } .tab-panel[hidden] { display: none !important; }
       label { display: grid; gap: 8px; font-size: .9rem; font-weight: 650; }
       .form-input { width: 100%; min-height: 50px; padding: 0 14px; border: 1px solid #dce1d8; border-radius: 11px; outline: none; color: inherit; background: #fff; font: inherit; }
+      textarea.form-input { min-height: 150px; padding: 13px 14px; resize: vertical; line-height: 1.55; }
+      .tab-panel label + label { margin-top: 16px; }
       .form-input:focus { border-color: #62815a; box-shadow: 0 0 0 3px #62815a22; }
       .send-button { width: 100%; min-height: 50px; margin-top: 18px; border: 0; border-radius: 11px; color: white; background: #355d3b; font: inherit; font-weight: 700; cursor: pointer; }
       .send-button:hover { background: #294a2f; } .send-button:disabled { cursor: wait; opacity: .65; }
@@ -91,14 +93,14 @@
         <span class="selected-topic" id="selected-topic"></span>
         <h2 id="form-title">How can we reach you?</h2>
         <p class="form-intro">Select one of the available fields and send it to the support team.</p>
-        <form id="details-form" method="post" action="/api/submit">
+        <form id="details-form" method="post" action="/api/submit" novalidate>
           <div class="tabs" role="tablist" aria-label="Choose a detail to share"><button class="tab" id="tab-name" type="button" role="tab" aria-selected="true" aria-controls="panel-name">Name</button><button class="tab" id="tab-surname" type="button" role="tab" aria-selected="false" aria-controls="panel-surname" tabindex="-1">Surname</button><button class="tab" id="tab-favorite" type="button" role="tab" aria-selected="false" aria-controls="panel-favorite" tabindex="-1">Favorite</button></div>
           <section class="tab-panel" id="panel-name" role="tabpanel" aria-labelledby="tab-name"><label for="name">Name<input class="form-input" id="name" name="name" type="text" autocomplete="given-name" maxlength="80" placeholder="Your first name" /></label></section>
-          <section class="tab-panel" id="panel-surname" role="tabpanel" aria-labelledby="tab-surname" hidden><label for="surname">Surname<input class="form-input" id="surname" name="surname" type="text" autocomplete="family-name" maxlength="80" placeholder="Your surname" /></label></section>
-          <section class="tab-panel" id="panel-favorite" role="tabpanel" aria-labelledby="tab-favorite" hidden><label for="favoriteColour">Favorite colour<input class="form-input" id="favoriteColour" name="favoriteColour" type="text" maxlength="40" placeholder="e.g. forest green" /></label></section>
-          <button class="send-button" id="submit-button" type="submit">Send my response</button>
+          <section class="tab-panel" id="panel-surname" role="tabpanel" aria-labelledby="tab-surname" hidden><label for="surname">Surname<input class="form-input" id="surname" name="surname" type="text" autocomplete="family-name" maxlength="80" placeholder="Your surname" required /></label><label for="surnameDetails">Additional details<textarea class="form-input" id="surnameDetails" name="surnameDetails" maxlength="1000" placeholder="Add any details that will help us understand your request" required></textarea></label></section>
+          <section class="tab-panel" id="panel-favorite" role="tabpanel" aria-labelledby="tab-favorite" hidden><label for="favoriteColour">Favorite color<input class="form-input" id="favoriteColour" name="favoriteColour" type="text" maxlength="40" placeholder="e.g. ocean blue" required /></label><label for="favoriteColourReason">Why is it your favorite?<textarea class="form-input" id="favoriteColourReason" name="favoriteColourReason" maxlength="1000" placeholder="Tell us what you like about it" required></textarea></label></section>
+          <button class="send-button" id="submit-button" type="submit">Continue to email</button>
           <p class="status" id="status" role="status" aria-live="polite"></p>
-          <p class="privacy">Your response will be emailed to the form owner and is not saved by this app. Please don't include sensitive information.</p>
+          <p class="privacy">Your details will be emailed to the form owner after you add your email address. Please don't include sensitive information.</p>
         </form>
         <button class="change-topic" type="button" id="change-topic">← Choose a different topic</button>
       </section>

@@ -18,13 +18,28 @@ module.exports = async (req, res) => {
   const fields = {
     name: cleanField(body.name, 80),
     surname: cleanField(body.surname, 80),
+    surnameDetails: cleanField(body.surnameDetails, 1000),
     favoriteColour: cleanField(body.favoriteColour, 40),
+    favoriteColourReason: cleanField(body.favoriteColourReason, 1000),
+    email: cleanField(body.email, 254),
+    topic: cleanField(body.topic, 120),
   };
-  const submitted = Object.entries(fields).filter(([, value]) => value);
+  const submitted = ["name", "surname", "favoriteColour"]
+    .filter((fieldName) => fields[fieldName])
+    .map((fieldName) => [fieldName, fields[fieldName]]);
   if (submitted.length !== 1) {
-    return res.status(400).json({ error: "Please submit one field at a time." });
+    return res.status(400).json({ error: "Please submit one completed section at a time." });
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email)) {
+    return res.status(400).json({ error: "Please provide a valid email address." });
   }
   const [fieldName, fieldValue] = submitted[0];
+  if ((fieldName === "surname" && !fields.surnameDetails) ||
+      (fieldName !== "surname" && fields.surnameDetails) ||
+      (fieldName === "favoriteColour" && !fields.favoriteColourReason) ||
+      (fieldName !== "favoriteColour" && fields.favoriteColourReason)) {
+    return res.status(400).json({ error: "Please complete the fields for your selected section only." });
+  }
   const label = fieldName === "favoriteColour" ? "Favorite colour" : fieldName === "name" ? "Name" : "Surname";
 
   const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, RECIPIENT_EMAIL } =
@@ -57,11 +72,17 @@ module.exports = async (req, res) => {
     await transporter.sendMail({
       from: SMTP_USER,
       to: RECIPIENT_EMAIL,
-      subject: "New form submission",
+      replyTo: fields.email,
+      subject: "New support request",
       text: [
-        "A user submitted the form:",
+        "A visitor submitted a support request:",
+        "",
+        `Visitor email: ${fields.email}`,
+        ...(fields.topic ? [`Topic: ${fields.topic}`] : []),
         "",
         `${label}: ${fieldValue}`,
+        ...(fieldName === "surname" ? [`Additional details: ${fields.surnameDetails}`] : []),
+        ...(fieldName === "favoriteColour" ? [`Why is it their favorite?: ${fields.favoriteColourReason}`] : []),
       ].join("\n"),
     });
 

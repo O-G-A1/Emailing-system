@@ -78,13 +78,28 @@ app.post("/api/submit", submitLimiter, async (req, res) => {
   const fields = {
     name: cleanField(req.body?.name, 80),
     surname: cleanField(req.body?.surname, 80),
+    surnameDetails: cleanField(req.body?.surnameDetails, 1000),
     favoriteColour: cleanField(req.body?.favoriteColour, 40),
+    favoriteColourReason: cleanField(req.body?.favoriteColourReason, 1000),
+    email: cleanField(req.body?.email, 254),
+    topic: cleanField(req.body?.topic, 120),
   };
-  const submitted = Object.entries(fields).filter(([, value]) => value);
+  const submitted = ["name", "surname", "favoriteColour"]
+    .filter((fieldName) => fields[fieldName])
+    .map((fieldName) => [fieldName, fields[fieldName]]);
   if (submitted.length !== 1) {
-    return res.status(400).json({ error: "Please submit one field at a time." });
+    return res.status(400).json({ error: "Please submit one completed section at a time." });
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email)) {
+    return res.status(400).json({ error: "Please provide a valid email address." });
   }
   const [fieldName, fieldValue] = submitted[0];
+  if ((fieldName === "surname" && !fields.surnameDetails) ||
+      (fieldName !== "surname" && fields.surnameDetails) ||
+      (fieldName === "favoriteColour" && !fields.favoriteColourReason) ||
+      (fieldName !== "favoriteColour" && fields.favoriteColourReason)) {
+    return res.status(400).json({ error: "Please complete the fields for your selected section only." });
+  }
   const label = fieldName === "favoriteColour" ? "Favorite colour" : fieldName === "name" ? "Name" : "Surname";
 
   const mailConfiguration = getMailConfiguration();
@@ -102,11 +117,17 @@ app.post("/api/submit", submitLimiter, async (req, res) => {
     await transporter.sendMail({
       from: process.env.SMTP_USER,
       to: process.env.RECIPIENT_EMAIL,
-      subject: "New form submission",
+      replyTo: fields.email,
+      subject: "New support request",
       text: [
-        "A user submitted the form:",
+        "A visitor submitted a support request:",
+        "",
+        `Visitor email: ${fields.email}`,
+        ...(fields.topic ? [`Topic: ${fields.topic}`] : []),
         "",
         `${label}: ${fieldValue}`,
+        ...(fieldName === "surname" ? [`Additional details: ${fields.surnameDetails}`] : []),
+        ...(fieldName === "favoriteColour" ? [`Why is it their favorite?: ${fields.favoriteColourReason}`] : []),
       ].join("\n"),
     });
 

@@ -92,6 +92,70 @@ if (tabs.length) activateTab(tabs.find((tab) => tab.getAttribute("aria-selected"
 const choiceStep = document.querySelector("#choice-step");
 const formView = document.querySelector("#form-view");
 const selectedTopic = document.querySelector("#selected-topic");
+const emailForm = document.querySelector("#email-form");
+const emailStep = document.querySelector("#email-step");
+const missingRequest = document.querySelector("#missing-request");
+const supportDraftKey = "helpCenterSupportRequest";
+
+if (emailForm) {
+  let draft = null;
+  try { draft = JSON.parse(sessionStorage.getItem(supportDraftKey) || "null"); } catch { draft = null; }
+  const hasRequest = draft && ["name", "surname", "favoriteColour"].some((key) => typeof draft[key] === "string" && draft[key].trim());
+  if (hasRequest) {
+    emailStep.hidden = false;
+    const summaryParts = [];
+    if (draft.topic) summaryParts.push(`Topic: ${draft.topic}`);
+    if (draft.name) summaryParts.push(`Name: ${draft.name}`);
+    if (draft.surname) summaryParts.push(`Surname: ${draft.surname}`);
+    if (draft.surnameDetails) summaryParts.push(`Additional details: ${draft.surnameDetails}`);
+    if (draft.favoriteColour) summaryParts.push(`Favorite color: ${draft.favoriteColour}`);
+    if (draft.favoriteColourReason) summaryParts.push(`Why: ${draft.favoriteColourReason}`);
+    document.querySelector("#request-summary").textContent = summaryParts.join(" | ");
+  } else {
+    missingRequest.hidden = false;
+    document.querySelector(".back").hidden = true;
+  }
+
+  emailForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const emailInput = document.querySelector("#visitor-email");
+    const emailStatus = document.querySelector("#email-status");
+    const emailButton = document.querySelector("#email-submit");
+    emailStatus.textContent = "";
+    emailStatus.dataset.kind = "";
+    if (!emailInput.value.trim() || !emailInput.validity.valid) {
+      emailStatus.textContent = "Enter a valid email address so the support team can reply.";
+      emailStatus.dataset.kind = "error";
+      emailInput.focus();
+      return;
+    }
+
+    emailButton.disabled = true;
+    emailButton.textContent = "Sending...";
+    try {
+      const response = await fetch("/api/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...draft, email: emailInput.value.trim() }),
+      });
+      const resultText = await response.text();
+      let result = {};
+      try { result = JSON.parse(resultText); } catch { /* The server returned non-JSON. */ }
+      if (!response.ok) throw new Error(`${result.error || "Server error"} (status ${response.status})`);
+      sessionStorage.removeItem(supportDraftKey);
+      emailStatus.textContent = result.message || "Your request has been sent to support.";
+      emailStatus.dataset.kind = "success";
+      emailForm.reset();
+      emailButton.textContent = "Request sent";
+    } catch (error) {
+      emailStatus.textContent = error.message || "Unable to send your request. Please try again.";
+      emailStatus.dataset.kind = "error";
+      emailButton.disabled = false;
+      emailButton.textContent = "Send to support";
+    }
+  });
+}
+
 document.querySelectorAll(".choice").forEach((choice) => {
   choice.addEventListener("click", () => {
     selectedTopic.textContent = choice.dataset.topic;
@@ -183,40 +247,22 @@ searchInput?.addEventListener("keydown", (event) => {
 
 form?.addEventListener("submit", async (event) => {
   event.preventDefault();
-  statusEl.textContent = "";
-  statusEl.dataset.kind = "";
-  const activePanel = panels.find((panel) => !panel.hidden);
-  const activeInput = activePanel.querySelector("input");
-  const value = activeInput.value.trim();
-  if (!value) {
-    statusEl.textContent = "Please enter a response before sending.";
-    statusEl.dataset.kind = "error";
-    activeInput.focus();
+  {
+    const activePanelForDraft = panels.find((panel) => !panel.hidden);
+    const fieldsForDraft = [...activePanelForDraft.querySelectorAll("input, textarea")];
+    const emptyField = fieldsForDraft.find((field) => !field.value.trim());
+    if (emptyField) {
+      statusEl.textContent = "Please complete each field before continuing.";
+      statusEl.dataset.kind = "error";
+      emptyField.focus();
+      return;
+    }
+    const draft = Object.fromEntries(fieldsForDraft.map((field) => [field.name, field.value.trim()]));
+    draft.topic = selectedTopic?.textContent.trim() || "";
+    sessionStorage.setItem(supportDraftKey, JSON.stringify(draft));
+    button.disabled = true;
+    button.textContent = "Continue to email";
+    window.location.href = "email.html";
     return;
-  }
-  const payload = { [activeInput.name]: value };
-  button.disabled = true;
-  button.textContent = "Sending…";
-
-  try {
-    const response = await fetch("/api/submit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const text = await response.text();
-    let result = {};
-    try { result = JSON.parse(text); } catch { /* Server replied with non-JSON. */ }
-    if (!response.ok) throw new Error(`${result.error || "Server error"} (status ${response.status})`);
-    statusEl.textContent = result.message || `Sent (status ${response.status})`;
-    statusEl.dataset.kind = "success";
-    form.reset();
-    activateTab(tabs[0]);
-  } catch (error) {
-    statusEl.textContent = error.message || "Unable to send your response. Please try again.";
-    statusEl.dataset.kind = "error";
-  } finally {
-    button.disabled = false;
-    button.textContent = "Send my response";
   }
 });

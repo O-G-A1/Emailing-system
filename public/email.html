@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f4f7fc" />
+    <title>Your email | Help Center</title>
+    <style>
+      :root { color-scheme: light; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #172338; background: #f4f7fc; }
+      * { box-sizing: border-box; } body { min-height: 100vh; margin: 0; background: radial-gradient(ellipse at 15% 8%, #e2eeff 0, transparent 32rem), radial-gradient(ellipse at 92% 56%, #e3faf5 0, transparent 28rem), #f4f7fc; }
+      .topbar { min-height: 76px; padding: 0 clamp(18px, 6vw, 88px); display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid #e1e8f2; background: #ffffffd1; backdrop-filter: blur(14px); }
+      .brand { display: inline-flex; align-items: center; gap: 10px; color: #101b30; font-weight: 800; text-decoration: none; }
+      .brand-mark { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 11px; color: white; background: linear-gradient(145deg, #13243f, #1a75ed); }
+      .support-button { min-height: 42px; padding: 8px 12px; display: inline-flex; align-items: center; gap: 8px; border: 0; border-radius: 11px; color: #1769e0; background: transparent; font: inherit; font-weight: 700; cursor: pointer; }
+      .support-button:hover { background: #e8f2ff; }
+      main { width: min(calc(100% - 36px), 600px); margin: 0 auto; padding: clamp(52px, 10vh, 100px) 0 76px; }
+      .back { color: #1769e0; font-size: .92rem; font-weight: 650; text-decoration: none; } .back:hover { text-decoration: underline; }
+      .panel { margin-top: 26px; padding: clamp(24px, 6vw, 42px); border: 1px solid #dce5f1; border-radius: 24px; background: rgba(255,255,255,.94); box-shadow: 0 20px 55px #102c5014; }
+      .eyebrow { margin: 0 0 12px; color: #2876d9; font-size: .76rem; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+      h1 { margin: 0; color: #101b30; font-size: clamp(2rem, 6vw, 2.8rem); letter-spacing: -.055em; line-height: 1.08; }
+      .intro { margin: 13px 0 26px; color: #66758d; line-height: 1.6; }
+      .summary { margin: 0 0 25px; padding: 16px 18px; border: 1px solid #e3ebf6; border-radius: 14px; background: #f7faff; }
+      .summary-title { margin: 0 0 7px; color: #66758d; font-size: .78rem; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+      .summary-content { margin: 0; color: #1b3558; font-weight: 650; line-height: 1.5; overflow-wrap: anywhere; }
+      .form-field { display: grid; gap: 8px; font-size: .92rem; font-weight: 700; }
+      .form-input { width: 100%; min-height: 52px; padding: 0 15px; border: 1px solid #d5e0ef; border-radius: 12px; outline: none; color: #172338; background: white; font: inherit; }
+      .form-input:focus { border-color: #5797f1; box-shadow: 0 0 0 4px #1769e01c; }
+      .privacy { margin: 13px 0 0; color: #718096; font-size: .82rem; line-height: 1.55; }
+      .submit { width: 100%; min-height: 52px; margin-top: 21px; border: 0; border-radius: 12px; color: #08243a; background: linear-gradient(105deg, #59e4c4, #62c6ff); box-shadow: 0 10px 26px #46d8c229; font: inherit; font-weight: 800; cursor: pointer; }
+      .submit:hover { background: linear-gradient(105deg, #72f0d1, #80d2ff); }
+      .submit:disabled { cursor: wait; opacity: .65; }
+      .status { min-height: 1.5em; margin: 13px 0 0; font-size: .92rem; line-height: 1.5; }
+      .status[data-kind="success"] { color: #11775e; } .status[data-kind="error"] { color: #a13131; }
+      .return-link { display: inline-flex; margin-top: 14px; color: #1769e0; font-weight: 700; text-decoration: none; }
+      .return-link:hover { text-decoration: underline; }
+      .chat-close { position: fixed; z-index: 2147483647; top: clamp(82px, 12vh, 108px); right: 18px; display: inline-flex; min-height: 44px; align-items: center; gap: 8px; padding: 0 14px; border: 1px solid #dce5f1; border-radius: 12px; color: #142746; background: #fff; font: inherit; font-size: .9rem; font-weight: 700; box-shadow: 0 8px 24px #14274624; cursor: pointer; }
+      .chat-close[hidden] { display: none !important; }
+      @media (max-width: 400px) { .topbar { min-height: 68px; padding-inline: 12px; } .brand-name, .support-label { display: none; } main { width: calc(100% - 24px); padding-top: 34px; } .panel { padding: 22px 17px; border-radius: 19px; } }
+      @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
+    </style>
+  </head>
+  <body>
+    <header class="topbar"><a class="brand" href="./"><span class="brand-mark" aria-hidden="true">?</span><span class="brand-name">Help Center</span></a><button class="support-button" type="button" data-open-chat aria-label="Open support chat"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-2.5 2v-5A7.5 7.5 0 1 1 20 11.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 11.5h.01M12 11.5h.01M16 11.5h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="support-label">Support</span></button></header>
+    <main>
+      <a class="back" href="help.html">← Back to your details</a>
+      <section class="panel" id="email-step" hidden aria-labelledby="page-title">
+        <p class="eyebrow">One last step</p>
+        <h1 id="page-title">Where can we reach you?</h1>
+        <p class="intro">Add your email address so the support team can follow up. Your request will be sent securely to our support inbox.</p>
+        <div class="summary"><p class="summary-title">Your selected details</p><p class="summary-content" id="request-summary"></p></div>
+        <form id="email-form" novalidate>
+          <label class="form-field" for="visitor-email">Email address<input class="form-input" id="visitor-email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="you@example.com" required /></label>
+          <p class="privacy">We’ll include this address with your request so the support team can reply. Please don’t include sensitive information in your request.</p>
+          <button class="submit" id="email-submit" type="submit">Send to support</button>
+          <p class="status" id="email-status" role="status" aria-live="polite"></p>
+        </form>
+        <a class="return-link" href="./">Return to Help Center</a>
+      </section>
+      <section class="panel" id="missing-request" hidden>
+        <h1>No request to finish</h1>
+        <p class="intro">Start by choosing a help topic and entering your details.</p>
+        <a class="submit" href="help.html" style="display:flex;align-items:center;justify-content:center;text-decoration:none">Start a support request</a>
+      </section>
+    </main>
+    <button class="chat-close" id="chat-close" type="button" aria-label="Close chat panel" hidden><span aria-hidden="true">×</span>Close chat</button>
+    <script src="script.js?v=8" defer></script>
+  </body>
+</html>
