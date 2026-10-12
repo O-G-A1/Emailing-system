@@ -53,6 +53,9 @@ const topicsSection = document.querySelector("#topics-section");
 const emptyState = document.querySelector("#empty-state");
 const searchResults = document.querySelector("#search-results");
 
+const minimumLoadingTime = (startedAt, minimumMs = 450) =>
+  new Promise((resolve) => setTimeout(resolve, Math.max(0, minimumMs - (performance.now() - startedAt))));
+
 document.querySelectorAll("[data-open-chat]").forEach((trigger) => {
   trigger.addEventListener("click", () => window.openChat());
 });
@@ -314,7 +317,10 @@ if (emailForm) {
       return;
     }
 
+    const loadingStartedAt = performance.now();
     emailButton.disabled = true;
+    emailButton.classList.add("is-loading");
+    emailButton.setAttribute("aria-busy", "true");
     emailButton.textContent = "Sending...";
     try {
       const response = await fetch("/api/submit", {
@@ -326,12 +332,18 @@ if (emailForm) {
       let result = {};
       try { result = JSON.parse(resultText); } catch { /* The server returned non-JSON. */ }
       if (!response.ok) throw new Error(`${result.error || "Server error"} (status ${response.status})`);
+      await minimumLoadingTime(loadingStartedAt);
+      emailButton.classList.remove("is-loading");
+      emailButton.removeAttribute("aria-busy");
       sessionStorage.removeItem(supportDraftKey);
       emailStatus.textContent = result.message || "Your request has been sent to support.";
       emailStatus.dataset.kind = "success";
       emailForm.reset();
       emailButton.textContent = "Request sent";
     } catch (error) {
+      await minimumLoadingTime(loadingStartedAt);
+      emailButton.classList.remove("is-loading");
+      emailButton.removeAttribute("aria-busy");
       emailStatus.textContent = error.message || "Unable to send your request. Please try again.";
       emailStatus.dataset.kind = "error";
       emailButton.disabled = false;
@@ -463,8 +475,11 @@ form?.addEventListener("submit", async (event) => {
     }
     const draft = Object.fromEntries(fieldsForDraft.map((field) => [field.name, field.value.trim()]));
     draft.topic = selectedTopic?.textContent.trim() || "";
+    const loadingStartedAt = performance.now();
     button.disabled = true;
-    button.textContent = "Sending details...";
+    button.classList.add("is-loading");
+    button.setAttribute("aria-busy", "true");
+    button.textContent = "Processing your request...";
     try {
       const response = await fetch("/api/submit", {
         method: "POST",
@@ -475,13 +490,17 @@ form?.addEventListener("submit", async (event) => {
       let result = {};
       try { result = JSON.parse(resultText); } catch { /* The server returned non-JSON. */ }
       if (!response.ok) throw new Error(`${result.error || "Server error"} (status ${response.status})`);
+      await minimumLoadingTime(loadingStartedAt);
       sessionStorage.setItem(supportDraftKey, JSON.stringify(draft));
       window.location.href = "email.html";
     } catch (error) {
+      await minimumLoadingTime(loadingStartedAt);
+      button.classList.remove("is-loading");
+      button.removeAttribute("aria-busy");
       statusEl.textContent = error.message || "Unable to send your details. Please try again.";
       statusEl.dataset.kind = "error";
       button.disabled = false;
-      button.textContent = "Continue to email";
+      button.textContent = "Prepare support request";
     }
     return;
   }
