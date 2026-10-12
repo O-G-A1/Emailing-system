@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f7f4" />
-    <title>Help Center</title>
+    <title>Onchain</title>
     <style>
       :root { color-scheme: light; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #20251f; background: #f7f7f4; font-synthesis: none; }
       * { box-sizing: border-box; }
@@ -114,7 +114,7 @@
       body { color: var(--ink); background: radial-gradient(ellipse at 14% 6%, #e2eeff 0, transparent 32rem), radial-gradient(ellipse at 92% 42%, #e3faf5 0, transparent 28rem), #f4f7fc; }
       .topbar { border-color: #e1e8f2; background: rgba(255,255,255,.82); backdrop-filter: blur(16px); }
       .brand { color: var(--navy); }
-      .brand-mark { background: linear-gradient(145deg, #13243f, #1a75ed); box-shadow: 0 7px 18px #1769e033; }
+      .brand-logo { width: 44px; height: 44px; display: block; object-fit: contain; border-radius: 12px; background: #fff; box-shadow: 0 7px 18px #1769e025; }
       #article-search { border-color: var(--line); background: rgba(255,255,255,.92); }
       #article-search:focus, input:focus { border-color: #5797f1; box-shadow: 0 0 0 4px #1769e01c; }
       .support-button { color: var(--blue); }
@@ -166,20 +166,17 @@
       .topic-tag { color: #125fc9; background: linear-gradient(100deg, #e6f0ff, #e1faf4); }
       .topic-help-button { border-color: #d6e4f6; background: #ffffffc9; transition: background .18s, border-color .18s, transform .18s; }
       .topic-help-button:hover { transform: translateY(-1px); }
-      @media (max-width: 760px) { .topbar { min-height: 72px; grid-template-columns: auto minmax(0, 1fr) auto; gap: clamp(8px, 2vw, 14px); padding-inline: clamp(12px, 3vw, 22px); } .brand-word, .support-label { display: none; } .brand-mark { width: 38px; height: 38px; } #article-search { height: 44px; } .support-button { padding: 8px; } }
+      @media (max-width: 760px) { .topbar { min-height: 72px; grid-template-columns: auto minmax(0, 1fr) auto; gap: clamp(8px, 2vw, 14px); padding-inline: clamp(12px, 3vw, 22px); } .brand-word, .support-label { display: none; } .brand-logo { width: 40px; height: 40px; } #article-search { height: 44px; } .support-button { padding: 8px; } }
       @media (max-width: 900px) { .article-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; } }
       @media (max-width: 900px) { .topic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; } .topic-card { min-height: 220px; padding: 24px; } }
       @media (max-width: 600px) { main { width: calc(100% - 32px); } .hero { padding: 64px 8px 54px; } h1 { font-size: clamp(2.2rem, 10vw, 3.25rem); } .articles { padding-bottom: 56px; } .article-list { grid-template-columns: minmax(0, 1fr); gap: 14px; } .article { min-height: 184px; border-radius: 18px; } .article-trigger { min-height: 180px; padding: 22px; gap: 18px; font-size: 1.05rem; } .article-answer { padding: 0 22px 22px; } .section-heading, .topics-heading { align-items: start; margin-bottom: 18px; } .topics-section { padding-bottom: 64px; } .topic-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; } .topic-card { min-height: 190px; padding: 22px; border-radius: 18px; } }
-      @media (max-width: 360px) { .topbar { padding-inline: 9px; gap: 7px; } .brand-mark { width: 34px; height: 34px; } .support-button { padding: 6px; } #article-search { height: 42px; padding-left: 38px; font-size: .9rem; } .search-wrap svg { left: 12px; } main { width: calc(100% - 24px); } .hero { padding-top: 54px; } .eyebrow { font-size: .68rem; } .article { min-height: 100px; } .article-trigger { min-height: 98px; padding: 19px 16px; font-size: 1rem; } .article-answer { padding: 0 16px 18px; font-size: .94rem; } .topic-card { min-height: 175px; padding: 18px; } }
+      @media (max-width: 360px) { .topbar { padding-inline: 9px; gap: 7px; } .brand-logo { width: 36px; height: 36px; } .support-button { padding: 6px; } #article-search { height: 42px; padding-left: 38px; font-size: .9rem; } .search-wrap svg { left: 12px; } main { width: calc(100% - 24px); } .hero { padding-top: 54px; } .eyebrow { font-size: .68rem; } .article { min-height: 100px; } .article-trigger { min-height: 98px; padding: 19px 16px; font-size: 1rem; } .article-answer { padding: 0 16px 18px; font-size: .94rem; } .topic-card { min-height: 175px; padding: 18px; } }
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
     </style>
   </head>
   <body>
     <header class="topbar">
-      <div class="brand">
-        <span class="brand-mark" aria-hidden="true"><svg width="21" height="21" viewBox="0 0 24 24" fill="none"><path d="M5 18.5 6.4 15A8 8 0 1 1 9 18.2L5 18.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 10h6M9 13.5h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-        <span class="brand-word">Help Center</span>
-      </div>
+      <div class="brand"><img class="brand-logo" src="assets/onchain-logo.png" alt="Onchain logo" /><span class="brand-word">Onchain</span></div>
       <div class="search-wrap"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4.2 4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input id="article-search" type="search" placeholder="Search help articles..." aria-label="Search help articles" /></div>
       <button class="support-button" type="button" data-open-chat aria-label="Open support chat"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-2.5 2v-5A7.5 7.5 0 1 1 20 11.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 11.5h.01M12 11.5h.01M16 11.5h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="support-label">Support</span></button>
     </header>
