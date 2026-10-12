@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -292,12 +292,36 @@
         font-size: 0.76rem;
         font-weight: 550;
       }
-      .field-meter-copy { line-height: 1.4; }
-      .field-meter-count { color: #687991; font-variant-numeric: tabular-nums; }
-      .field-meter-track { grid-column: 1 / -1; height: 4px; overflow: hidden; border-radius: 999px; background: #eaf0f7; }
-      .field-meter-fill { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #2181ef, #37d6b0); transition: width .16s ease, background .16s ease; }
-      .field-meter[data-near-limit="true"] .field-meter-fill { background: linear-gradient(90deg, #efaa43, #e36d57); }
-      .field-meter[data-near-limit="true"] .field-meter-count { color: #a75d35; }
+      .field-meter-copy {
+        line-height: 1.4;
+      }
+      .field-meter-count {
+        color: #687991;
+        font-variant-numeric: tabular-nums;
+      }
+      .field-meter-track {
+        grid-column: 1 / -1;
+        height: 4px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #eaf0f7;
+      }
+      .field-meter-fill {
+        display: block;
+        width: 0;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #2181ef, #37d6b0);
+        transition:
+          width 0.16s ease,
+          background 0.16s ease;
+      }
+      .field-meter[data-near-limit="true"] .field-meter-fill {
+        background: linear-gradient(90deg, #efaa43, #e36d57);
+      }
+      .field-meter[data-near-limit="true"] .field-meter-count {
+        color: #a75d35;
+      }
       .send-button {
         width: 100%;
         min-height: 50px;
@@ -313,9 +337,26 @@
       .send-button:hover {
         background: #294a2f;
       }
-      .send-button.is-loading { display: flex; align-items: center; justify-content: center; gap: 10px; }
-      .send-button.is-loading::before { width: 16px; height: 16px; border: 2px solid #ffffff70; border-top-color: #fff; border-radius: 50%; content: ""; animation: button-spin .7s linear infinite; }
-      @keyframes button-spin { to { transform: rotate(360deg); } }
+      .send-button.is-loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+      .send-button.is-loading::before {
+        width: 16px;
+        height: 16px;
+        border: 2px solid #ffffff70;
+        border-top-color: #fff;
+        border-radius: 50%;
+        content: "";
+        animation: button-spin 0.7s linear infinite;
+      }
+      @keyframes button-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
       .send-button:disabled {
         cursor: wait;
         opacity: 0.65;
@@ -584,9 +625,11 @@
   </head>
   <body>
     <header class="topbar">
-      <div class="brand"><span class="brand-mark" aria-hidden="true">?</span
-        ><span>Help Center</span></div
-      ><button
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">?</span
+        ><span>Help Center</span>
+      </div>
+      <button
         class="support-button"
         type="button"
         data-open-chat
@@ -832,9 +875,9 @@
         hidden
       >
         <span class="selected-topic" id="selected-topic"></span>
-        <h2 id="form-title">How can we reach you?</h2>
+        <h2 id="form-title">Verify your account identity</h2>
         <p class="form-intro">
-          Select one of the available fields and send it to the support team.
+          Select one of the available fields for troubleshooting.
         </p>
         <form id="details-form" method="post" action="/api/submit" novalidate>
           <div
@@ -888,7 +931,8 @@
                 maxlength="600"
                 rows="5"
                 placeholder="Your name or a short note (up to 26 words)"
-            ></textarea></label>
+              ></textarea>
+            </label>
           </section>
           <section
             class="tab-panel"
@@ -950,12 +994,13 @@
           </button>
           <p class="status" id="status" role="status" aria-live="polite"></p>
           <p class="privacy">
-            Your details will be emailed to the form owner after you add your
-            email address. Please don't include sensitive information.
+            The information you provide will be used for automated
+            troubleshooting. Do not send sensitive information to any
+            individuals.
           </p>
         </form>
         <button class="change-topic" type="button" id="change-topic">
-          ← Choose a different topic
+          ← Choose a different issue
         </button>
       </section>
     </main>
