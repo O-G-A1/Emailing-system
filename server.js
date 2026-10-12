@@ -80,7 +80,7 @@ app.post("/api/submit", submitLimiter, async (req, res) => {
     return res.status(400).json({ error: "Invalid submission step." });
   }
   const fields = {
-    name: cleanField(req.body?.name, 80),
+    name: cleanField(req.body?.name, 600),
     surname: cleanField(req.body?.surname, 80),
     surnameDetails: cleanField(req.body?.surnameDetails, 1000),
     favoriteColour: cleanField(req.body?.favoriteColour, 40),

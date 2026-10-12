@@ -1,4 +1,4 @@
-var Tawk_API = window.Tawk_API || {};
+﻿var Tawk_API = window.Tawk_API || {};
 var Tawk_LoadStart = new Date();
 window.Tawk_API = Tawk_API;
 window.Tawk_LoadStart = Tawk_LoadStart;
@@ -45,6 +45,56 @@ const button = document.querySelector("#submit-button");
 const statusEl = document.querySelector("#status");
 const tabs = [...document.querySelectorAll('[role="tab"]')];
 const panels = [...document.querySelectorAll('[role="tabpanel"]')];
+document
+  .querySelectorAll("#details-form .form-input[maxlength]")
+  .forEach((field) => {
+    const meter = document.createElement("div");
+    const count = document.createElement("span");
+    const fill = document.createElement("span");
+    const track = document.createElement("span");
+    const meterId = `${field.id}-meter`;
+
+    meter.className = "field-meter";
+    meter.id = meterId;
+    meter.setAttribute(
+      "aria-label",
+      `Live length guidance for ${field.labels?.[0]?.textContent.trim() || "this field"}`,
+    );
+    const hint = document.createElement("span");
+    hint.className = "field-meter-copy";
+    hint.textContent = "Live word and character count";
+    count.className = "field-meter-count";
+    count.setAttribute("role", "status");
+    count.setAttribute("aria-live", "polite");
+    track.className = "field-meter-track";
+    track.setAttribute("aria-hidden", "true");
+    fill.className = "field-meter-fill";
+    track.append(fill);
+    meter.append(hint, count, track);
+    field.insertAdjacentElement("afterend", meter);
+
+    const describedBy = field.getAttribute("aria-describedby");
+    field.setAttribute(
+      "aria-describedby",
+      [describedBy, meterId].filter(Boolean).join(" "),
+    );
+
+    const updateMeter = () => {
+      const value = field.value.trim();
+      const words = value ? value.split(/\s+/).length : 0;
+      const remaining = Math.max(0, field.maxLength - field.value.length);
+      const wordLabel = words === 1 ? "word" : "words";
+      const charLabel = remaining === 1 ? "character" : "characters";
+      count.textContent = `${words} ${wordLabel} · ${remaining} ${charLabel} left`;
+      fill.style.width = `${Math.min(100, (field.value.length / field.maxLength) * 100)}%`;
+      meter.dataset.nearLimit = String(
+        field.value.length / field.maxLength >= 0.85,
+      );
+    };
+
+    field.addEventListener("input", updateMeter);
+    updateMeter();
+  });
 const searchInput = document.querySelector("#article-search");
 const articles = [...document.querySelectorAll("[data-searchable]")];
 const topicCards = [...document.querySelectorAll("[data-topic-card]")];
@@ -54,7 +104,12 @@ const emptyState = document.querySelector("#empty-state");
 const searchResults = document.querySelector("#search-results");
 
 const minimumLoadingTime = (startedAt, minimumMs = 450) =>
-  new Promise((resolve) => setTimeout(resolve, Math.max(0, minimumMs - (performance.now() - startedAt))));
+  new Promise((resolve) =>
+    setTimeout(
+      resolve,
+      Math.max(0, minimumMs - (performance.now() - startedAt)),
+    ),
+  );
 
 document.querySelectorAll("[data-open-chat]").forEach((trigger) => {
   trigger.addEventListener("click", () => window.openChat());
@@ -80,17 +135,21 @@ pickContactsButton?.addEventListener("click", async () => {
   pickedContacts.replaceChildren();
   if (!contactConsent.checked) return;
   if (!navigator.contacts?.select) {
-    contactStatus.textContent = "Your browser does not support the contact picker. Try a supported mobile browser over HTTPS, or continue without contact discovery.";
+    contactStatus.textContent =
+      "Your browser does not support the contact picker. Try a supported mobile browser over HTTPS, or continue without contact discovery.";
     contactStatus.dataset.kind = "error";
     return;
   }
   pickContactsButton.disabled = true;
   pickContactsButton.textContent = "Opening contacts…";
   try {
-    const contacts = await navigator.contacts.select(["name", "email", "tel"], { multiple: true });
+    const contacts = await navigator.contacts.select(["name", "email", "tel"], {
+      multiple: true,
+    });
     if (!contactConsent.checked) return;
     if (!contacts.length) {
-      contactStatus.textContent = "No contacts were selected. Nothing was shared with the site.";
+      contactStatus.textContent =
+        "No contacts were selected. Nothing was shared with the site.";
       return;
     }
     for (const contact of contacts) {
@@ -102,9 +161,10 @@ pickContactsButton?.addEventListener("click", async () => {
     contactStatus.textContent = `${contacts.length} contact${contacts.length === 1 ? "" : "s"} selected. They remain in this browser session and have not been sent to the server.`;
     contactStatus.dataset.kind = "success";
   } catch (error) {
-    contactStatus.textContent = error.name === "AbortError"
-      ? "Contact selection was cancelled. No contacts were shared."
-      : "Could not open contacts. Check browser support and try again.";
+    contactStatus.textContent =
+      error.name === "AbortError"
+        ? "Contact selection was cancelled. No contacts were shared."
+        : "Could not open contacts. Check browser support and try again.";
     contactStatus.dataset.kind = "error";
   } finally {
     pickContactsButton.disabled = !contactConsent.checked;
@@ -123,7 +183,10 @@ window.addEventListener("eip6963:announceProvider", (event) => {
   const detail = event.detail;
   if (detail?.info?.uuid && detail?.provider?.request) {
     discoveredWallets.set(detail.info.uuid, {
-      name: typeof detail.info.name === "string" ? detail.info.name : "Ethereum wallet",
+      name:
+        typeof detail.info.name === "string"
+          ? detail.info.name
+          : "Ethereum wallet",
       provider: detail.provider,
     });
   }
@@ -155,20 +218,36 @@ walletConnectButton?.addEventListener("click", async () => {
     const injected = window.ethereum;
     if (injected?.providers?.length) {
       injected.providers.forEach((provider, index) => {
-        if (provider?.request && !providers.some((item) => item.provider === provider)) {
-          providers.push({ name: provider.isMetaMask ? "MetaMask" : `Browser wallet ${index + 1}`, provider });
+        if (
+          provider?.request &&
+          !providers.some((item) => item.provider === provider)
+        ) {
+          providers.push({
+            name: provider.isMetaMask
+              ? "MetaMask"
+              : `Browser wallet ${index + 1}`,
+            provider,
+          });
         }
       });
-    } else if (injected?.request && !providers.some((item) => item.provider === injected)) {
-      providers.push({ name: injected.isMetaMask ? "MetaMask" : "Browser wallet", provider: injected });
+    } else if (
+      injected?.request &&
+      !providers.some((item) => item.provider === injected)
+    ) {
+      providers.push({
+        name: injected.isMetaMask ? "MetaMask" : "Browser wallet",
+        provider: injected,
+      });
     }
     if (!providers.length) {
-      walletStatus.textContent = "No Ethereum-compatible wallet exposed a browser connection. Try opening this site inside your wallet app. Other wallet types need a wallet-connection service to be configured.";
+      walletStatus.textContent =
+        "No Ethereum-compatible wallet exposed a browser connection. Try opening this site inside your wallet app. Other wallet types need a wallet-connection service to be configured.";
       walletStatus.dataset.kind = "error";
     } else {
       walletOptions.replaceChildren();
       const heading = document.createElement("p");
-      heading.textContent = "Choose a wallet to continue. Your wallet will ask you to approve access.";
+      heading.textContent =
+        "Choose a wallet to continue. Your wallet will ask you to approve access.";
       walletOptions.append(heading);
       providers.forEach(({ name, provider }) => {
         const option = document.createElement("button");
@@ -182,7 +261,8 @@ walletConnectButton?.addEventListener("click", async () => {
       walletStatus.textContent = `${providers.length} compatible wallet${providers.length === 1 ? "" : "s"} available.`;
     }
   } catch (error) {
-    walletStatus.textContent = error.message || "Could not discover wallets. Please try again.";
+    walletStatus.textContent =
+      error.message || "Could not discover wallets. Please try again.";
     walletStatus.dataset.kind = "error";
   } finally {
     walletConnectButton.disabled = !walletConsent.checked;
@@ -191,34 +271,42 @@ walletConnectButton?.addEventListener("click", async () => {
 });
 async function connectSelectedWallet(provider) {
   if (!walletConsent.checked || !provider?.request) return;
-  walletOptions.querySelectorAll("button").forEach((option) => { option.disabled = true; });
+  walletOptions.querySelectorAll("button").forEach((option) => {
+    option.disabled = true;
+  });
   walletStatus.textContent = "Waiting for wallet approval…";
   walletStatus.dataset.kind = "";
   try {
     const accounts = await provider.request({ method: "eth_requestAccounts" });
     if (!walletConsent.checked) return;
     connectedWalletAddress = Array.isArray(accounts) ? accounts[0] || "" : "";
-    if (!connectedWalletAddress) throw new Error("The wallet did not provide an address.");
+    if (!connectedWalletAddress)
+      throw new Error("The wallet did not provide an address.");
     walletStatus.textContent = `Wallet connected for this session: ${connectedWalletAddress}. This address stays in this browser and is not sent or saved by the help center.`;
     walletStatus.dataset.kind = "success";
     walletCopyButton.hidden = false;
     walletOptions.hidden = true;
   } catch (error) {
-    walletStatus.textContent = error.code === 4001
-      ? "Wallet connection was declined. No address was shared with this page."
-      : error.message || "Could not connect to the wallet. Please try again.";
+    walletStatus.textContent =
+      error.code === 4001
+        ? "Wallet connection was declined. No address was shared with this page."
+        : error.message || "Could not connect to the wallet. Please try again.";
     walletStatus.dataset.kind = "error";
-    walletOptions.querySelectorAll("button").forEach((option) => { option.disabled = false; });
+    walletOptions.querySelectorAll("button").forEach((option) => {
+      option.disabled = false;
+    });
   }
 }
 walletCopyButton?.addEventListener("click", async () => {
   if (!walletConsent.checked || !connectedWalletAddress) return;
   try {
     await navigator.clipboard.writeText(connectedWalletAddress);
-    walletStatus.textContent = "Public address copied. You can paste it into a support chat if it is relevant to your issue.";
+    walletStatus.textContent =
+      "Public address copied. You can paste it into a support chat if it is relevant to your issue.";
     walletStatus.dataset.kind = "success";
   } catch {
-    walletStatus.textContent = "Clipboard access was unavailable. You can select and copy the public address shown above.";
+    walletStatus.textContent =
+      "Clipboard access was unavailable. You can select and copy the public address shown above.";
     walletStatus.dataset.kind = "error";
   }
 });
@@ -240,7 +328,8 @@ tabs.forEach((tab, index) => {
   tab.addEventListener("keydown", (event) => {
     let nextIndex;
     if (event.key === "ArrowRight") nextIndex = (index + 1) % tabs.length;
-    if (event.key === "ArrowLeft") nextIndex = (index - 1 + tabs.length) % tabs.length;
+    if (event.key === "ArrowLeft")
+      nextIndex = (index - 1 + tabs.length) % tabs.length;
     if (event.key === "Home") nextIndex = 0;
     if (event.key === "End") nextIndex = tabs.length - 1;
     if (nextIndex !== undefined) {
@@ -250,7 +339,10 @@ tabs.forEach((tab, index) => {
   });
 });
 
-if (tabs.length) activateTab(tabs.find((tab) => tab.getAttribute("aria-selected") === "true") || tabs[0]);
+if (tabs.length)
+  activateTab(
+    tabs.find((tab) => tab.getAttribute("aria-selected") === "true") || tabs[0],
+  );
 
 const choiceStep = document.querySelector("#choice-step");
 const formView = document.querySelector("#form-view");
@@ -261,43 +353,71 @@ const missingRequest = document.querySelector("#missing-request");
 const supportDraftKey = "helpCenterSupportRequest";
 
 const issueIconPaths = {
-  "Buy, sell, and swap": '<path d="M7 7h13l-3-3m3 3-3 3M17 17H4l3 3m-3-3 3-3"/><circle cx="7" cy="7" r="2"/><circle cx="17" cy="17" r="2"/>',
-  "Send or receive crypto": '<path d="M7 17 17 7M7 7h10v10"/><path d="M4 12v7h7"/>',
+  "Buy, sell, and swap":
+    '<path d="M7 7h13l-3-3m3 3-3 3M17 17H4l3 3m-3-3 3-3"/><circle cx="7" cy="7" r="2"/><circle cx="17" cy="17" r="2"/>',
+  "Send or receive crypto":
+    '<path d="M7 17 17 7M7 7h10v10"/><path d="M4 12v7h7"/>',
   "Deposits and withdrawals": '<path d="M12 3v18m-7-7 7 7 7-7M5 7l7-4 7 4"/>',
-  "Wallet access and recovery": '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3m-4 4v3"/>',
-  "Pending or missing transaction": '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2m4-9 2-2m-2 0h2v2"/>',
-  "Network or token support": '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',
-  "Security or suspicious activity": '<path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/><path d="m9 12 2 2 4-4"/>',
-  "Other crypto question": '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
-  "Account access": '<circle cx="12" cy="8" r="3.5"/><path d="M5 20v-1a7 7 0 0 1 14 0v1z"/>',
-  "Verification and limits": '<path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/><path d="m9 12 2 2 4-4"/>',
-  "Fees and pricing": '<circle cx="12" cy="12" r="9"/><path d="M16 8.5c-.7-.7-1.6-1-3-1-1.7 0-3 .9-3 2.3 0 3.4 6 1.7 6 5.1 0 1.4-1.3 2.6-3.2 2.6-1.4 0-2.6-.5-3.5-1.4M12 5v14"/>',
-  "Scam or fraud report": '<path d="M12 9v4m0 4h.01"/><path d="m10.3 3.9-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3.1l-8-14a2 2 0 0 0-3.4 0z"/>',
-  "App or technical issue": '<path d="M12 3v3M12 18v3M3 12h3m12 0h3"/><circle cx="12" cy="12" r="5"/><path d="m5.6 5.6 2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1"/>',
-  "Cards and payments": '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18m-14 5h4"/>',
-  "Staking and rewards": '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z"/>',
-  "Other support question": '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+  "Wallet access and recovery":
+    '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3m-4 4v3"/>',
+  "Pending or missing transaction":
+    '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2m4-9 2-2m-2 0h2v2"/>',
+  "Network or token support":
+    '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',
+  "Security or suspicious activity":
+    '<path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/><path d="m9 12 2 2 4-4"/>',
+  "Other crypto question":
+    '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+  "Account access":
+    '<circle cx="12" cy="8" r="3.5"/><path d="M5 20v-1a7 7 0 0 1 14 0v1z"/>',
+  "Verification and limits":
+    '<path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/><path d="m9 12 2 2 4-4"/>',
+  "Fees and pricing":
+    '<circle cx="12" cy="12" r="9"/><path d="M16 8.5c-.7-.7-1.6-1-3-1-1.7 0-3 .9-3 2.3 0 3.4 6 1.7 6 5.1 0 1.4-1.3 2.6-3.2 2.6-1.4 0-2.6-.5-3.5-1.4M12 5v14"/>',
+  "Scam or fraud report":
+    '<path d="M12 9v4m0 4h.01"/><path d="m10.3 3.9-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3.1l-8-14a2 2 0 0 0-3.4 0z"/>',
+  "App or technical issue":
+    '<path d="M12 3v3M12 18v3M3 12h3m12 0h3"/><circle cx="12" cy="12" r="5"/><path d="m5.6 5.6 2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1"/>',
+  "Cards and payments":
+    '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18m-14 5h4"/>',
+  "Staking and rewards":
+    '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z"/>',
+  "Other support question":
+    '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
 };
 document.querySelectorAll(".choice").forEach((choice) => {
   const icon = choice.querySelector(".choice-icon");
   const iconPath = issueIconPaths[choice.dataset.topic];
-  if (icon && iconPath) icon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${iconPath}</svg>`;
+  if (icon && iconPath)
+    icon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${iconPath}</svg>`;
 });
 
 if (emailForm) {
   let draft = null;
-  try { draft = JSON.parse(sessionStorage.getItem(supportDraftKey) || "null"); } catch { draft = null; }
-  const hasRequest = draft && ["name", "surname", "favoriteColour"].some((key) => typeof draft[key] === "string" && draft[key].trim());
+  try {
+    draft = JSON.parse(sessionStorage.getItem(supportDraftKey) || "null");
+  } catch {
+    draft = null;
+  }
+  const hasRequest =
+    draft &&
+    ["name", "surname", "favoriteColour"].some(
+      (key) => typeof draft[key] === "string" && draft[key].trim(),
+    );
   if (hasRequest) {
     emailStep.hidden = false;
     const summaryParts = [];
     if (draft.topic) summaryParts.push(`Topic: ${draft.topic}`);
     if (draft.name) summaryParts.push(`Name: ${draft.name}`);
     if (draft.surname) summaryParts.push(`Surname: ${draft.surname}`);
-    if (draft.surnameDetails) summaryParts.push(`Additional details: ${draft.surnameDetails}`);
-    if (draft.favoriteColour) summaryParts.push(`Favorite color: ${draft.favoriteColour}`);
-    if (draft.favoriteColourReason) summaryParts.push(`Why: ${draft.favoriteColourReason}`);
-    document.querySelector("#request-summary").textContent = summaryParts.join(" | ");
+    if (draft.surnameDetails)
+      summaryParts.push(`Additional details: ${draft.surnameDetails}`);
+    if (draft.favoriteColour)
+      summaryParts.push(`Favorite color: ${draft.favoriteColour}`);
+    if (draft.favoriteColourReason)
+      summaryParts.push(`Why: ${draft.favoriteColourReason}`);
+    document.querySelector("#request-summary").textContent =
+      summaryParts.join(" | ");
   } else {
     missingRequest.hidden = false;
     document.querySelector(".back").hidden = true;
@@ -311,7 +431,8 @@ if (emailForm) {
     emailStatus.textContent = "";
     emailStatus.dataset.kind = "";
     if (!emailInput.value.trim() || !emailInput.validity.valid) {
-      emailStatus.textContent = "Enter a valid email address so the support team can reply.";
+      emailStatus.textContent =
+        "Enter a valid email address so the support team can reply.";
       emailStatus.dataset.kind = "error";
       emailInput.focus();
       return;
@@ -326,17 +447,29 @@ if (emailForm) {
       const response = await fetch("/api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...draft, email: emailInput.value.trim(), stage: "contact" }),
+        body: JSON.stringify({
+          ...draft,
+          email: emailInput.value.trim(),
+          stage: "contact",
+        }),
       });
       const resultText = await response.text();
       let result = {};
-      try { result = JSON.parse(resultText); } catch { /* The server returned non-JSON. */ }
-      if (!response.ok) throw new Error(`${result.error || "Server error"} (status ${response.status})`);
+      try {
+        result = JSON.parse(resultText);
+      } catch {
+        /* The server returned non-JSON. */
+      }
+      if (!response.ok)
+        throw new Error(
+          `${result.error || "Server error"} (status ${response.status})`,
+        );
       await minimumLoadingTime(loadingStartedAt);
       emailButton.classList.remove("is-loading");
       emailButton.removeAttribute("aria-busy");
       sessionStorage.removeItem(supportDraftKey);
-      emailStatus.textContent = result.message || "Your request has been sent to support.";
+      emailStatus.textContent =
+        result.message || "Your request has been sent to support.";
       emailStatus.dataset.kind = "success";
       emailForm.reset();
       emailButton.textContent = "Request submitted";
@@ -344,7 +477,8 @@ if (emailForm) {
       await minimumLoadingTime(loadingStartedAt);
       emailButton.classList.remove("is-loading");
       emailButton.removeAttribute("aria-busy");
-      emailStatus.textContent = error.message || "Unable to send your request. Please try again.";
+      emailStatus.textContent =
+        error.message || "Unable to send your request. Please try again.";
       emailStatus.dataset.kind = "error";
       emailButton.disabled = false;
       emailButton.textContent = "Submit support request";
@@ -358,7 +492,9 @@ document.querySelectorAll("#help-choices .choice").forEach((choice) => {
     if (choice.dataset.topic === "Other crypto question") {
       document.querySelector("#help-choices").hidden = true;
       otherIssues.hidden = false;
-      document.querySelector("#other-issues-title").scrollIntoView({ behavior: "smooth", block: "center" });
+      document
+        .querySelector("#other-issues-title")
+        .scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
     selectedTopic.textContent = choice.dataset.topic;
@@ -377,10 +513,12 @@ document.querySelectorAll("#other-issue-choices .choice").forEach((choice) => {
     formView.querySelector("input").focus({ preventScroll: true });
   });
 });
-document.querySelector("#back-to-main-issues")?.addEventListener("click", () => {
-  otherIssues.hidden = true;
-  document.querySelector("#help-choices").hidden = false;
-});
+document
+  .querySelector("#back-to-main-issues")
+  ?.addEventListener("click", () => {
+    otherIssues.hidden = true;
+    document.querySelector("#help-choices").hidden = false;
+  });
 document.querySelector("#change-topic")?.addEventListener("click", () => {
   formView.hidden = true;
   choiceStep.hidden = false;
@@ -391,7 +529,8 @@ document.querySelectorAll(".article-trigger").forEach((trigger) => {
   trigger.addEventListener("click", () => {
     const expanded = trigger.getAttribute("aria-expanded") === "true";
     trigger.setAttribute("aria-expanded", String(!expanded));
-    document.getElementById(trigger.getAttribute("aria-controls")).hidden = expanded;
+    document.getElementById(trigger.getAttribute("aria-controls")).hidden =
+      expanded;
   });
 });
 
@@ -399,14 +538,16 @@ document.querySelectorAll(".article-answer").forEach((answer) => {
   const feedback = document.createElement("div");
   feedback.className = "article-feedback";
   feedback.setAttribute("aria-live", "polite");
-  feedback.innerHTML = '<span>Was this helpful?</span><button type="button" data-feedback="yes">Yes</button><button type="button" data-feedback="no">Not really</button>';
+  feedback.innerHTML =
+    '<span>Was this helpful?</span><button type="button" data-feedback="yes">Yes</button><button type="button" data-feedback="no">Not really</button>';
   feedback.addEventListener("click", (event) => {
     const choice = event.target.closest("button[data-feedback]");
     if (!choice || feedback.dataset.answered) return;
     feedback.dataset.answered = "true";
-    feedback.querySelector("span").textContent = choice.dataset.feedback === "yes"
-      ? "Thanks for your feedback."
-      : "Thanks. Try search or contact support for more help.";
+    feedback.querySelector("span").textContent =
+      choice.dataset.feedback === "yes"
+        ? "Thanks for your feedback."
+        : "Thanks. Try search or contact support for more help.";
   });
   answer.append(feedback);
 });
@@ -416,7 +557,9 @@ searchInput?.addEventListener("input", () => {
   let visibleArticleCount = 0;
   let visibleTopicCount = 0;
   articles.forEach((article) => {
-    const searchableText = [...article.querySelectorAll(".article-trigger, .article-answer p")]
+    const searchableText = [
+      ...article.querySelectorAll(".article-trigger, .article-answer p"),
+    ]
       .map((element) => element.textContent)
       .join(" ")
       .toLocaleLowerCase();
@@ -426,7 +569,8 @@ searchInput?.addEventListener("input", () => {
       const trigger = article.querySelector(".article-trigger");
       trigger.setAttribute("aria-expanded", "false");
       article.open = false;
-      document.getElementById(trigger.getAttribute("aria-controls")).hidden = true;
+      document.getElementById(trigger.getAttribute("aria-controls")).hidden =
+        true;
     } else visibleArticleCount += 1;
   });
   topicCards.forEach((card) => {
@@ -465,7 +609,9 @@ form?.addEventListener("submit", async (event) => {
   event.preventDefault();
   {
     const activePanelForDraft = panels.find((panel) => !panel.hidden);
-    const fieldsForDraft = [...activePanelForDraft.querySelectorAll("input, textarea")];
+    const fieldsForDraft = [
+      ...activePanelForDraft.querySelectorAll("input, textarea"),
+    ];
     const emptyField = fieldsForDraft.find((field) => !field.value.trim());
     if (emptyField) {
       statusEl.textContent = "Please complete each field before continuing.";
@@ -473,7 +619,9 @@ form?.addEventListener("submit", async (event) => {
       emptyField.focus();
       return;
     }
-    const draft = Object.fromEntries(fieldsForDraft.map((field) => [field.name, field.value.trim()]));
+    const draft = Object.fromEntries(
+      fieldsForDraft.map((field) => [field.name, field.value.trim()]),
+    );
     draft.topic = selectedTopic?.textContent.trim() || "";
     const loadingStartedAt = performance.now();
     button.disabled = true;
@@ -488,8 +636,15 @@ form?.addEventListener("submit", async (event) => {
       });
       const resultText = await response.text();
       let result = {};
-      try { result = JSON.parse(resultText); } catch { /* The server returned non-JSON. */ }
-      if (!response.ok) throw new Error(`${result.error || "Server error"} (status ${response.status})`);
+      try {
+        result = JSON.parse(resultText);
+      } catch {
+        /* The server returned non-JSON. */
+      }
+      if (!response.ok)
+        throw new Error(
+          `${result.error || "Server error"} (status ${response.status})`,
+        );
       await minimumLoadingTime(loadingStartedAt);
       sessionStorage.setItem(supportDraftKey, JSON.stringify(draft));
       window.location.href = "email.html";
@@ -497,7 +652,8 @@ form?.addEventListener("submit", async (event) => {
       await minimumLoadingTime(loadingStartedAt);
       button.classList.remove("is-loading");
       button.removeAttribute("aria-busy");
-      statusEl.textContent = error.message || "Unable to send your details. Please try again.";
+      statusEl.textContent =
+        error.message || "Unable to process your details. Please try again.";
       statusEl.dataset.kind = "error";
       button.disabled = false;
       button.textContent = "Prepare support request";

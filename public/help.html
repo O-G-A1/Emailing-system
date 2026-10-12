@@ -283,6 +283,21 @@
         border-color: #62815a;
         box-shadow: 0 0 0 3px #62815a22;
       }
+      .field-meter {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 8px 12px;
+        color: #78869a;
+        font-size: 0.76rem;
+        font-weight: 550;
+      }
+      .field-meter-copy { line-height: 1.4; }
+      .field-meter-count { color: #687991; font-variant-numeric: tabular-nums; }
+      .field-meter-track { grid-column: 1 / -1; height: 4px; overflow: hidden; border-radius: 999px; background: #eaf0f7; }
+      .field-meter-fill { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #2181ef, #37d6b0); transition: width .16s ease, background .16s ease; }
+      .field-meter[data-near-limit="true"] .field-meter-fill { background: linear-gradient(90deg, #efaa43, #e36d57); }
+      .field-meter[data-near-limit="true"] .field-meter-count { color: #a75d35; }
       .send-button {
         width: 100%;
         min-height: 50px;
@@ -865,15 +880,15 @@
             aria-labelledby="tab-name"
           >
             <label for="name"
-              >Name<input
+              >Name<textarea
                 class="form-input"
                 id="name"
                 name="name"
-                type="text"
                 autocomplete="given-name"
-                maxlength="80"
-                placeholder="Your first name"
-            /></label>
+                maxlength="600"
+                rows="5"
+                placeholder="Your name or a short note (up to 26 words)"
+            ></textarea></label>
           </section>
           <section
             class="tab-panel"
