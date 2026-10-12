@@ -20,7 +20,7 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: "Invalid submission step." });
   }
   const fields = {
-    name: cleanField(body.name, 80),
+    name: cleanField(body.name, 600),
     surname: cleanField(body.surname, 80),
     surnameDetails: cleanField(body.surnameDetails, 1000),
     favoriteColour: cleanField(body.favoriteColour, 40),
