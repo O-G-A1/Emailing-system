@@ -258,22 +258,22 @@ const missingRequest = document.querySelector("#missing-request");
 const supportDraftKey = "helpCenterSupportRequest";
 
 const issueIconPaths = {
-  "Account and profile": '<circle cx="12" cy="8" r="3.5"/><path d="M5 20v-1a7 7 0 0 1 14 0v1z"/><path d="m17 7 2 2 4-4"/>',
-  "Using the service": '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',
-  "Something else": '<path d="M4 7h5l3 5 4-7h4M4 17h5l3-5 4 7h4"/><path d="m18 4 3 1-1 3M18 20l3-1-1-3"/>',
-  "Technical issue": '<path d="M14 6a5 5 0 0 0-6 6l-5 5a2 2 0 0 0 3 3l5-5a5 5 0 0 0 6-6l-3 3-3-1-1-3z"/><path d="m17 15 4 4M19 13l2-2"/>',
-  "Email and notifications": '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/><circle cx="19" cy="5" r="3" fill="currentColor" stroke="white"/>',
-  "Privacy and information": '<path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/><path d="m9 12 2 2 4-4"/>',
-  "Feedback and suggestions": '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L9 17l-4 1 1-4z"/><path d="m14 6 4 4"/>',
-  "Other": '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
-  "Login and access": '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3M12 14v3"/>',
-  "Payments and billing": '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h3"/>',
-  "App is slow or unresponsive": '<path d="M12 3v3M12 18v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1"/><circle cx="12" cy="12" r="5"/>',
-  "Missing information": '<path d="M4 4h16v16H4zM8 9h8M8 13h8M8 17h5"/><path d="M17 3v4m-2-2h4"/>',
-  "Verification": '<circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/>',
-  "Security concern": '<path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/><path d="M12 8v4m0 4h.01"/>',
-  "Feature request": '<path d="M12 5v14M5 12h14"/><circle cx="12" cy="12" r="9"/>',
-  "Something not listed": '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+  "Buy, sell, and swap": '<path d="M7 7h13l-3-3m3 3-3 3M17 17H4l3 3m-3-3 3-3"/><circle cx="7" cy="7" r="2"/><circle cx="17" cy="17" r="2"/>',
+  "Send or receive crypto": '<path d="M7 17 17 7M7 7h10v10"/><path d="M4 12v7h7"/>',
+  "Deposits and withdrawals": '<path d="M12 3v18m-7-7 7 7 7-7M5 7l7-4 7 4"/>',
+  "Wallet access and recovery": '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3m-4 4v3"/>',
+  "Pending or missing transaction": '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2m4-9 2-2m-2 0h2v2"/>',
+  "Network or token support": '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',
+  "Security or suspicious activity": '<path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/><path d="m9 12 2 2 4-4"/>',
+  "Other crypto question": '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+  "Account access": '<circle cx="12" cy="8" r="3.5"/><path d="M5 20v-1a7 7 0 0 1 14 0v1z"/>',
+  "Verification and limits": '<path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/><path d="m9 12 2 2 4-4"/>',
+  "Fees and pricing": '<circle cx="12" cy="12" r="9"/><path d="M16 8.5c-.7-.7-1.6-1-3-1-1.7 0-3 .9-3 2.3 0 3.4 6 1.7 6 5.1 0 1.4-1.3 2.6-3.2 2.6-1.4 0-2.6-.5-3.5-1.4M12 5v14"/>',
+  "Scam or fraud report": '<path d="M12 9v4m0 4h.01"/><path d="m10.3 3.9-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3.1l-8-14a2 2 0 0 0-3.4 0z"/>',
+  "App or technical issue": '<path d="M12 3v3M12 18v3M3 12h3m12 0h3"/><circle cx="12" cy="12" r="5"/><path d="m5.6 5.6 2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1"/>',
+  "Cards and payments": '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18m-14 5h4"/>',
+  "Staking and rewards": '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z"/>',
+  "Other support question": '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
 };
 document.querySelectorAll(".choice").forEach((choice) => {
   const icon = choice.querySelector(".choice-icon");
@@ -343,7 +343,7 @@ if (emailForm) {
 const otherIssues = document.querySelector("#other-issues");
 document.querySelectorAll("#help-choices .choice").forEach((choice) => {
   choice.addEventListener("click", () => {
-    if (choice.dataset.topic === "Other") {
+    if (choice.dataset.topic === "Other crypto question") {
       document.querySelector("#help-choices").hidden = true;
       otherIssues.hidden = false;
       document.querySelector("#other-issues-title").scrollIntoView({ behavior: "smooth", block: "center" });
