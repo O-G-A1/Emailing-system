@@ -321,7 +321,7 @@ if (emailForm) {
     emailButton.disabled = true;
     emailButton.classList.add("is-loading");
     emailButton.setAttribute("aria-busy", "true");
-    emailButton.textContent = "Sending...";
+    emailButton.textContent = "Submitting request...";
     try {
       const response = await fetch("/api/submit", {
         method: "POST",
@@ -339,7 +339,7 @@ if (emailForm) {
       emailStatus.textContent = result.message || "Your request has been sent to support.";
       emailStatus.dataset.kind = "success";
       emailForm.reset();
-      emailButton.textContent = "Request sent";
+      emailButton.textContent = "Request submitted";
     } catch (error) {
       await minimumLoadingTime(loadingStartedAt);
       emailButton.classList.remove("is-loading");
@@ -347,7 +347,7 @@ if (emailForm) {
       emailStatus.textContent = error.message || "Unable to send your request. Please try again.";
       emailStatus.dataset.kind = "error";
       emailButton.disabled = false;
-      emailButton.textContent = "Send to support";
+      emailButton.textContent = "Submit support request";
     }
   });
 }
