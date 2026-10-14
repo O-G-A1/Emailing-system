@@ -3,55 +3,20 @@ var Tawk_LoadStart = new Date();
 window.Tawk_API = Tawk_API;
 window.Tawk_LoadStart = Tawk_LoadStart;
 
-// The language is selected on the landing page and stored for every page.
-const languageStorageKey = "onchainWebsiteLanguage";
-const supportedLanguages = new Set([
-  "en", "es", "fr", "de", "it", "pt", "nl", "sv", "da", "no", "fi",
-  "pl", "cs", "ro", "hu", "el", "tr", "ru", "uk", "ar", "hi", "bn",
-  "zh-CN", "ja", "ko", "sw",
-]);
-let selectedLanguage = "en";
-try {
-  const savedLanguage = localStorage.getItem(languageStorageKey);
-  if (supportedLanguages.has(savedLanguage)) selectedLanguage = savedLanguage;
-} catch {
-  // Translation still works for the current page if storage is unavailable.
-}
-const languageSelect = document.querySelector("#language-select");
-if (languageSelect) languageSelect.value = selectedLanguage;
-function startWebsiteTranslation() {
-  if (selectedLanguage === "en" || !window.google?.translate?.TranslateElement)
-    return;
-  new window.google.translate.TranslateElement(
-    {
-      pageLanguage: "en",
-      includedLanguages: [...supportedLanguages].filter((code) => code !== "en").join(","),
-      autoDisplay: false,
-    },
-    "google_translate_element",
-  );
-}
-window.googleTranslateElementInit = startWebsiteTranslation;
-if (selectedLanguage !== "en") {
-  const translationScript = document.createElement("script");
-  translationScript.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
-  translationScript.async = true;
-  document.head.append(translationScript);
-}
-languageSelect?.addEventListener("change", () => {
-  const language = supportedLanguages.has(languageSelect.value)
-    ? languageSelect.value
-    : "en";
-  try {
-    localStorage.setItem(languageStorageKey, language);
-  } catch {
-    // The reload applies the selected language for the current session.
-  }
-  document.cookie = language === "en"
-    ? "googtrans=; path=/; max-age=0; SameSite=Lax"
-    : `googtrans=/en/${language}; path=/; max-age=31536000; SameSite=Lax`;
-  window.location.reload();
-});
+// GTranslate applies and remembers the selected language across site pages.
+window.gtranslateSettings = {
+  default_language: "en",
+  languages: [
+    "en", "es", "fr", "de", "it", "pt", "nl", "sv", "da", "no", "fi",
+    "pl", "cs", "ro", "hu", "el", "tr", "ru", "uk", "ar", "hi", "bn",
+    "zh-CN", "ja", "ko", "sw",
+  ],
+  wrapper_selector: "#gtranslate_wrapper",
+};
+const translationWidget = document.createElement("script");
+translationWidget.src = "https://cdn.gtranslate.net/widgets/latest/dropdown.js";
+translationWidget.async = true;
+document.head.append(translationWidget);
 
 let chatOpenRequested = false;
 window.openChat = function openChat() {
