@@ -13,12 +13,12 @@ app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
-        scriptSrc: ["'self'", "*.tawk.to", "cdn.jsdelivr.net", "https://cdn.gtranslate.net", "https://*.gtranslate.net", "https://*.gtranslate.com"],
+        scriptSrc: ["'self'", "*.tawk.to", "cdn.jsdelivr.net", "https://translate.google.com", "https://translate.googleapis.com"],
         styleSrc: ["'self'", "https:", "'unsafe-inline'", "*.tawk.to", "fonts.googleapis.com", "cdn.jsdelivr.net"],
-        frameSrc: ["'self'", "*.tawk.to", "https://*.gtranslate.net", "https://*.gtranslate.com"],
+        frameSrc: ["'self'", "*.tawk.to", "https://translate.google.com", "https://translate.googleapis.com"],
         fontSrc: ["'self'", "https:", "data:", "*.tawk.to", "fonts.gstatic.com"],
         imgSrc: ["'self'", "data:", "*.tawk.to", "cdn.jsdelivr.net", "tawk.link", "s3.amazonaws.com"],
-        connectSrc: ["'self'", "*.tawk.to", "wss://*.tawk.to", "https://*.tawk.help", "https://*.gtranslate.net", "https://*.gtranslate.com"],
+        connectSrc: ["'self'", "*.tawk.to", "wss://*.tawk.to", "https://*.tawk.help", "https://translate.googleapis.com"],
         formAction: ["'self'", "*.tawk.to"],
       },
     },

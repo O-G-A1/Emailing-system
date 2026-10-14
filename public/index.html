@@ -122,6 +122,7 @@
       .support-button:hover { background: #e8f2ff; }
       .language-picker { justify-self: end; position: relative; }
       .language-picker select { min-height: 42px; max-width: 150px; padding: 0 30px 0 12px; border: 1px solid var(--line); border-radius: 11px; color: var(--navy); background: #fff; font: inherit; font-size: .88rem; font-weight: 700; cursor: pointer; }
+      #google_translate_element { position: fixed; left: -10000px; top: 0; width: 1px; height: 1px; overflow: hidden; }
       .chat-close { position: fixed; z-index: 2147483647; top: clamp(88px, 12vh, 116px); right: clamp(12px, 2vw, 24px); display: inline-flex; min-height: 44px; align-items: center; gap: 8px; padding: 0 14px; border: 1px solid #dce5f1; border-radius: 12px; color: #142746; background: #fff; font: inherit; font-size: .9rem; font-weight: 700; box-shadow: 0 8px 24px #14274624; cursor: pointer; }
       .chat-close:hover { border-color: #b9d4f5; background: #f7faff; }
       .chat-close[hidden] { display: none !important; }
@@ -181,7 +182,7 @@
     <header class="topbar">
       <div class="brand"><img class="brand-logo" src="assets/onchain-logo.png" alt="Onchain logo" /><span class="brand-word">Onchain</span></div>
       <div class="search-wrap"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4.2 4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input id="article-search" type="search" placeholder="Search help articles..." aria-label="Search help articles" /></div>
-      <div class="language-picker" id="gtranslate_wrapper" aria-label="Change website language"></div>
+      <label class="language-picker"><span class="sr-only">Website language</span><select id="language-select" aria-label="Change website language"><option value="en">🌐 Language</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="it">Italiano</option><option value="pt">Português</option><option value="nl">Nederlands</option><option value="sv">Svenska</option><option value="da">Dansk</option><option value="no">Norsk</option><option value="fi">Suomi</option><option value="pl">Polski</option><option value="cs">Čeština</option><option value="ro">Română</option><option value="hu">Magyar</option><option value="el">Ελληνικά</option><option value="tr">Türkçe</option><option value="ru">Русский</option><option value="uk">Українська</option><option value="ar">العربية</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option><option value="zh-CN">简体中文</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="sw">Kiswahili</option></select></label>
       <button class="support-button" type="button" data-open-chat aria-label="Open support chat"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-2.5 2v-5A7.5 7.5 0 1 1 20 11.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 11.5h.01M12 11.5h.01M16 11.5h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="support-label">Support</span></button>
     </header>
     <main>
@@ -240,6 +241,7 @@
     <footer>Need a hand? Use the Support button to reach us.</footer>
 
     <button class="chat-close" id="chat-close" type="button" aria-label="Close chat panel" hidden><span aria-hidden="true">×</span>Close chat</button>
-    <script src="script.js?v=11" defer></script>
+    <div id="google_translate_element" aria-hidden="true"></div>
+    <script src="script.js?v=12" defer></script>
   </body>
 </html>

@@ -3,20 +3,71 @@ var Tawk_LoadStart = new Date();
 window.Tawk_API = Tawk_API;
 window.Tawk_LoadStart = Tawk_LoadStart;
 
-// GTranslate applies and remembers the selected language across site pages.
-window.gtranslateSettings = {
-  default_language: "en",
-  languages: [
-    "en", "es", "fr", "de", "it", "pt", "nl", "sv", "da", "no", "fi",
-    "pl", "cs", "ro", "hu", "el", "tr", "ru", "uk", "ar", "hi", "bn",
-    "zh-CN", "ja", "ko", "sw",
-  ],
-  wrapper_selector: "#gtranslate_wrapper",
+// Load Google's page translator on every page so the saved choice travels with navigation.
+const languageStorageKey = "onchainWebsiteLanguage";
+const languageCodes = new Set([
+  "en", "es", "fr", "de", "it", "pt", "nl", "sv", "da", "no", "fi",
+  "pl", "cs", "ro", "hu", "el", "tr", "ru", "uk", "ar", "hi", "bn",
+  "zh-CN", "ja", "ko", "sw",
+]);
+let currentLanguage = "en";
+try {
+  const savedLanguage = localStorage.getItem(languageStorageKey);
+  if (languageCodes.has(savedLanguage)) currentLanguage = savedLanguage;
+} catch {
+  // Keep the default language if browser storage is unavailable.
+}
+const languageSelect = document.querySelector("#language-select");
+if (languageSelect) languageSelect.value = currentLanguage;
+function setTranslatorLanguage(language) {
+  if (!languageCodes.has(language)) return;
+  currentLanguage = language;
+  try {
+    localStorage.setItem(languageStorageKey, language);
+  } catch {
+    // The Google Translate cookie still carries the selection between pages.
+  }
+  document.cookie = language === "en"
+    ? "googtrans=; path=/; max-age=0; SameSite=Lax"
+    : `googtrans=/en/${language}; path=/; max-age=31536000; SameSite=Lax`;
+  const combo = document.querySelector(".goog-te-combo");
+  if (combo) {
+    combo.value = language === "en" ? "" : language;
+    combo.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+}
+languageSelect?.addEventListener("change", () =>
+  setTranslatorLanguage(languageSelect.value),
+);
+window.googleTranslateElementInit = () => {
+  new window.google.translate.TranslateElement(
+    { pageLanguage: "en", includedLanguages: [...languageCodes].filter((code) => code !== "en").join(","), autoDisplay: false },
+    "google_translate_element",
+  );
+  const applySavedChoice = () => {
+    const combo = document.querySelector(".goog-te-combo");
+    if (!combo) return false;
+    if (currentLanguage !== "en") {
+      combo.value = currentLanguage;
+      combo.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+    return true;
+  };
+  if (!applySavedChoice()) {
+    const observer = new MutationObserver(() => {
+      if (applySavedChoice()) observer.disconnect();
+    });
+    observer.observe(document.querySelector("#google_translate_element"), {
+      childList: true,
+      subtree: true,
+    });
+    window.setTimeout(() => observer.disconnect(), 10000);
+  }
 };
-const translationWidget = document.createElement("script");
-translationWidget.src = "https://cdn.gtranslate.net/widgets/latest/dropdown.js";
-translationWidget.async = true;
-document.head.append(translationWidget);
+const googleTranslateScript = document.createElement("script");
+googleTranslateScript.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+googleTranslateScript.async = true;
+document.head.append(googleTranslateScript);
 
 let chatOpenRequested = false;
 window.openChat = function openChat() {
