@@ -11,7 +11,8 @@
       body { margin: 0; min-height: 100vh; background: #f7f7f4; }
       button, input { font: inherit; }
       button { cursor: pointer; }
-      .topbar { min-height: 82px; padding: 0 clamp(20px, 6vw, 88px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 520px) minmax(0, 1fr); align-items: center; gap: 24px; border-bottom: 1px solid #e7e9e2; background: rgba(255,255,255,.76); }
+      .topbar { min-height: 82px; padding: 0 clamp(20px, 6vw, 88px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 520px) auto auto; align-items: center; gap: 20px; border-bottom: 1px solid #e7e9e2; background: rgba(255,255,255,.76); }
+      .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
       .brand { min-width: 0; display: inline-flex; align-items: center; gap: 10px; color: #263c2a; text-decoration: none; font-weight: 800; font-size: 1.05rem; }
       .brand-mark { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 11px; color: white; background: #355d3b; }
       .search-wrap { position: relative; }
@@ -119,6 +120,8 @@
       #article-search:focus, input:focus { border-color: #5797f1; box-shadow: 0 0 0 4px #1769e01c; }
       .support-button { color: var(--blue); }
       .support-button:hover { background: #e8f2ff; }
+      .language-picker { justify-self: end; position: relative; }
+      .language-picker select { min-height: 42px; max-width: 150px; padding: 0 30px 0 12px; border: 1px solid var(--line); border-radius: 11px; color: var(--navy); background: #fff; font: inherit; font-size: .88rem; font-weight: 700; cursor: pointer; }
       .chat-close { position: fixed; z-index: 2147483647; top: clamp(88px, 12vh, 116px); right: clamp(12px, 2vw, 24px); display: inline-flex; min-height: 44px; align-items: center; gap: 8px; padding: 0 14px; border: 1px solid #dce5f1; border-radius: 12px; color: #142746; background: #fff; font: inherit; font-size: .9rem; font-weight: 700; box-shadow: 0 8px 24px #14274624; cursor: pointer; }
       .chat-close:hover { border-color: #b9d4f5; background: #f7faff; }
       .chat-close[hidden] { display: none !important; }
@@ -166,7 +169,7 @@
       .topic-tag { color: #125fc9; background: linear-gradient(100deg, #e6f0ff, #e1faf4); }
       .topic-help-button { border-color: #d6e4f6; background: #ffffffc9; transition: background .18s, border-color .18s, transform .18s; }
       .topic-help-button:hover { transform: translateY(-1px); }
-      @media (max-width: 760px) { .topbar { min-height: 72px; grid-template-columns: auto minmax(0, 1fr) auto; gap: clamp(8px, 2vw, 14px); padding-inline: clamp(12px, 3vw, 22px); } .brand-word, .support-label { display: none; } .brand-logo { width: 40px; height: 40px; } #article-search { height: 44px; } .support-button { padding: 8px; } }
+      @media (max-width: 760px) { .topbar { min-height: 72px; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: clamp(8px, 2vw, 14px); padding-inline: clamp(12px, 3vw, 22px); } .brand-word, .support-label { display: none; } .brand-logo { width: 40px; height: 40px; } #article-search { height: 44px; } .support-button { padding: 8px; } .language-picker select { max-width: 112px; min-height: 40px; padding-inline: 8px; font-size: .8rem; } }
       @media (max-width: 900px) { .article-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; } }
       @media (max-width: 900px) { .topic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; } .topic-card { min-height: 220px; padding: 24px; } }
       @media (max-width: 600px) { main { width: calc(100% - 32px); } .hero { padding: 64px 8px 54px; } h1 { font-size: clamp(2.2rem, 10vw, 3.25rem); } .articles { padding-bottom: 56px; } .article-list { grid-template-columns: minmax(0, 1fr); gap: 14px; } .article { min-height: 184px; border-radius: 18px; } .article-trigger { min-height: 180px; padding: 22px; gap: 18px; font-size: 1.05rem; } .article-answer { padding: 0 22px 22px; } .section-heading, .topics-heading { align-items: start; margin-bottom: 18px; } .topics-section { padding-bottom: 64px; } .topic-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; } .topic-card { min-height: 190px; padding: 22px; border-radius: 18px; } }
@@ -178,6 +181,7 @@
     <header class="topbar">
       <div class="brand"><img class="brand-logo" src="assets/onchain-logo.png" alt="Onchain logo" /><span class="brand-word">Onchain</span></div>
       <div class="search-wrap"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4.2 4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input id="article-search" type="search" placeholder="Search help articles..." aria-label="Search help articles" /></div>
+      <label class="language-picker"><span class="sr-only">Website language</span><select id="language-select" aria-label="Change website language"><option value="en">🌐 Language</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="it">Italiano</option><option value="pt">Português</option><option value="nl">Nederlands</option><option value="sv">Svenska</option><option value="da">Dansk</option><option value="no">Norsk</option><option value="fi">Suomi</option><option value="pl">Polski</option><option value="cs">Čeština</option><option value="ro">Română</option><option value="hu">Magyar</option><option value="el">Ελληνικά</option><option value="tr">Türkçe</option><option value="ru">Русский</option><option value="uk">Українська</option><option value="ar">العربية</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option><option value="zh-CN">简体中文</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="sw">Kiswahili</option></select></label>
       <button class="support-button" type="button" data-open-chat aria-label="Open support chat"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-2.5 2v-5A7.5 7.5 0 1 1 20 11.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 11.5h.01M12 11.5h.01M16 11.5h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="support-label">Support</span></button>
     </header>
     <main>
@@ -236,6 +240,7 @@
     <footer>Need a hand? Use the Support button to reach us.</footer>
 
     <button class="chat-close" id="chat-close" type="button" aria-label="Close chat panel" hidden><span aria-hidden="true">×</span>Close chat</button>
-    <script src="script.js?v=9" defer></script>
+    <div id="google_translate_element" hidden></div>
+    <script src="script.js?v=10" defer></script>
   </body>
 </html>
