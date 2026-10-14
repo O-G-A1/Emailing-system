@@ -420,33 +420,6 @@
       .support-button {
         color: var(--blue);
       }
-      .chat-close {
-        position: fixed;
-        z-index: 2147483647;
-        top: clamp(78px, 12vh, 108px);
-        right: clamp(12px, 2vw, 24px);
-        display: inline-flex;
-        min-height: 44px;
-        align-items: center;
-        gap: 8px;
-        padding: 0 14px;
-        border: 1px solid #dce5f1;
-        border-radius: 12px;
-        color: #142746;
-        background: #fff;
-        font: inherit;
-        font-size: 0.9rem;
-        font-weight: 700;
-        box-shadow: 0 8px 24px #14274624;
-        cursor: pointer;
-      }
-      .chat-close:hover {
-        border-color: #b9d4f5;
-        background: #f7faff;
-      }
-      .chat-close[hidden] {
-        display: none !important;
-      }
       .back,
       .change-topic {
         color: var(--blue);
@@ -631,6 +604,7 @@
         }
       }
     </style>
+    <link rel="stylesheet" href="chat.css?v=1" />
   </head>
   <body>
     <header class="topbar">
@@ -645,7 +619,7 @@
         class="support-button"
         type="button"
         data-open-chat
-        aria-label="Open support chat"
+        aria-label="Open support FAQ"
       >
         <svg
           width="21"
@@ -1014,16 +988,14 @@
         </button>
       </section>
     </main>
-    <button
-      class="chat-close"
-      id="chat-close"
-      type="button"
-      aria-label="Close chat panel"
-      hidden
-    >
-      <span aria-hidden="true">×</span>Close chat
-    </button>
+    <section class="faq-chat-panel" id="faq-chat-panel" role="dialog" aria-label="Onchain FAQ chat" hidden>
+      <header class="faq-chat-header"><div class="faq-chat-title"><strong>Onchain FAQ</strong><span>Automated answers · no live agent</span></div><button class="faq-chat-close" id="faq-chat-close" type="button" aria-label="Close FAQ chat">×</button></header>
+      <div class="faq-chat-log" id="faq-chat-log" aria-live="polite"><p class="faq-chat-message" data-from="assistant">Hi! Choose a topic and I’ll show a quick answer.</p></div>
+      <div class="faq-chat-options" id="faq-chat-options" role="group" aria-label="Common support questions"></div>
+      <p class="faq-chat-note">This FAQ does not collect or send messages.</p>
+    </section>
     <div id="google_translate_element" aria-hidden="true" style="position:fixed;left:-10000px;top:0;width:1px;height:1px;overflow:hidden"></div>
-    <script src="script.js?v=12" defer></script>
+    <script src="script.js?v=13" defer></script>
+    <script src="chat.js?v=1" defer></script>
   </body>
 </html>

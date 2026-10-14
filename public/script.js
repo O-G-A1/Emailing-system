@@ -1,8 +1,3 @@
-﻿var Tawk_API = window.Tawk_API || {};
-var Tawk_LoadStart = new Date();
-window.Tawk_API = Tawk_API;
-window.Tawk_LoadStart = Tawk_LoadStart;
-
 // Load Google's page translator on every page so the saved choice travels with navigation.
 const languageStorageKey = "onchainWebsiteLanguage";
 const languageCodes = new Set([
@@ -68,43 +63,6 @@ const googleTranslateScript = document.createElement("script");
 googleTranslateScript.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
 googleTranslateScript.async = true;
 document.head.append(googleTranslateScript);
-
-let chatOpenRequested = false;
-window.openChat = function openChat() {
-  if (typeof Tawk_API.maximize === "function") {
-    chatOpenRequested = false;
-    Tawk_API.maximize();
-  } else {
-    chatOpenRequested = true;
-  }
-};
-
-Tawk_API.onLoad = function () {
-  Tawk_API.hideWidget();
-  if (chatOpenRequested) window.openChat();
-};
-Tawk_API.onChatMaximized = function () {
-  const closeButton = document.querySelector("#chat-close");
-  if (closeButton) closeButton.hidden = false;
-};
-Tawk_API.onChatMinimized = function () {
-  const closeButton = document.querySelector("#chat-close");
-  if (closeButton) closeButton.hidden = true;
-};
-Tawk_API.onChatHidden = function () {
-  const closeButton = document.querySelector("#chat-close");
-  if (closeButton) closeButton.hidden = true;
-};
-
-(function loadTawkWidget() {
-  const script = document.createElement("script");
-  const firstScript = document.getElementsByTagName("script")[0];
-  script.async = true;
-  script.src = "https://embed.tawk.to/6a43b8040d47331d47d87ea0/1jsc8dl7o";
-  script.charset = "UTF-8";
-  script.setAttribute("crossorigin", "*");
-  firstScript.parentNode.insertBefore(script, firstScript);
-})();
 
 const form = document.querySelector("#details-form");
 const button = document.querySelector("#submit-button");
@@ -176,13 +134,6 @@ const minimumLoadingTime = (startedAt, minimumMs = 450) =>
       Math.max(0, minimumMs - (performance.now() - startedAt)),
     ),
   );
-
-document.querySelectorAll("[data-open-chat]").forEach((trigger) => {
-  trigger.addEventListener("click", () => window.openChat());
-});
-document.querySelector("#chat-close")?.addEventListener("click", () => {
-  if (typeof Tawk_API.minimize === "function") Tawk_API.minimize();
-});
 
 const contactConsent = document.querySelector("#contact-consent");
 const pickContactsButton = document.querySelector("#pick-contacts");

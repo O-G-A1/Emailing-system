@@ -36,15 +36,14 @@
       .status[data-kind="success"] { color: #11775e; } .status[data-kind="error"] { color: #a13131; }
       .return-link { display: inline-flex; margin-top: 14px; color: #1769e0; font-weight: 700; text-decoration: none; }
       .return-link:hover { text-decoration: underline; }
-      .chat-close { position: fixed; z-index: 2147483647; top: clamp(82px, 12vh, 108px); right: 18px; display: inline-flex; min-height: 44px; align-items: center; gap: 8px; padding: 0 14px; border: 1px solid #dce5f1; border-radius: 12px; color: #142746; background: #fff; font: inherit; font-size: .9rem; font-weight: 700; box-shadow: 0 8px 24px #14274624; cursor: pointer; }
-      .chat-close[hidden] { display: none !important; }
       .brand-logo { width: 44px; height: 44px; object-fit: contain; border-radius: 12px; background: #fff; box-shadow: 0 6px 18px #102c5017; }
       @media (max-width: 400px) { .topbar { min-height: 68px; padding-inline: 12px; } .brand-word, .support-label { display: none; } main { width: calc(100% - 24px); padding-top: 34px; } .panel { padding: 22px 17px; border-radius: 19px; } }
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; } }
     </style>
+    <link rel="stylesheet" href="chat.css?v=1" />
   </head>
   <body>
-    <header class="topbar"><div class="brand"><img class="brand-logo" src="assets/onchain-logo.png" alt="Onchain logo" /><span class="brand-word">Onchain</span></div><button class="support-button" type="button" data-open-chat aria-label="Open support chat"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-2.5 2v-5A7.5 7.5 0 1 1 20 11.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 11.5h.01M12 11.5h.01M16 11.5h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="support-label">Support</span></button></header>
+    <header class="topbar"><div class="brand"><img class="brand-logo" src="assets/onchain-logo.png" alt="Onchain logo" /><span class="brand-word">Onchain</span></div><button class="support-button" type="button" data-open-chat aria-label="Open support FAQ"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-2.5 2v-5A7.5 7.5 0 1 1 20 11.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 11.5h.01M12 11.5h.01M16 11.5h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="support-label">Support</span></button></header>
     <main>
       <a class="back" href="help.html">← Back to your details</a>
       <section class="panel" id="email-step" hidden aria-labelledby="page-title">
@@ -66,8 +65,14 @@
         <a class="submit" href="help.html" style="display:flex;align-items:center;justify-content:center;text-decoration:none">Start a support request</a>
       </section>
     </main>
-    <button class="chat-close" id="chat-close" type="button" aria-label="Close chat panel" hidden><span aria-hidden="true">×</span>Close chat</button>
+    <section class="faq-chat-panel" id="faq-chat-panel" role="dialog" aria-label="Onchain FAQ chat" hidden>
+      <header class="faq-chat-header"><div class="faq-chat-title"><strong>Onchain FAQ</strong><span>Automated answers · no live agent</span></div><button class="faq-chat-close" id="faq-chat-close" type="button" aria-label="Close FAQ chat">×</button></header>
+      <div class="faq-chat-log" id="faq-chat-log" aria-live="polite"><p class="faq-chat-message" data-from="assistant">Hi! Choose a topic and I’ll show a quick answer.</p></div>
+      <div class="faq-chat-options" id="faq-chat-options" role="group" aria-label="Common support questions"></div>
+      <p class="faq-chat-note">This FAQ does not collect or send messages.</p>
+    </section>
     <div id="google_translate_element" aria-hidden="true" style="position:fixed;left:-10000px;top:0;width:1px;height:1px;overflow:hidden"></div>
-    <script src="script.js?v=12" defer></script>
+    <script src="script.js?v=13" defer></script>
+    <script src="chat.js?v=1" defer></script>
   </body>
 </html>

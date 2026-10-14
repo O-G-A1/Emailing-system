@@ -123,9 +123,6 @@
       .language-picker { justify-self: end; position: relative; }
       .language-picker select { min-height: 42px; max-width: 150px; padding: 0 30px 0 12px; border: 1px solid var(--line); border-radius: 11px; color: var(--navy); background: #fff; font: inherit; font-size: .88rem; font-weight: 700; cursor: pointer; }
       #google_translate_element { position: fixed; left: -10000px; top: 0; width: 1px; height: 1px; overflow: hidden; }
-      .chat-close { position: fixed; z-index: 2147483647; top: clamp(88px, 12vh, 116px); right: clamp(12px, 2vw, 24px); display: inline-flex; min-height: 44px; align-items: center; gap: 8px; padding: 0 14px; border: 1px solid #dce5f1; border-radius: 12px; color: #142746; background: #fff; font: inherit; font-size: .9rem; font-weight: 700; box-shadow: 0 8px 24px #14274624; cursor: pointer; }
-      .chat-close:hover { border-color: #b9d4f5; background: #f7faff; }
-      .chat-close[hidden] { display: none !important; }
       h1, h2 { color: var(--navy); }
       .eyebrow { color: #2876d9; }
       .eyebrow::before { content: ""; display: inline-block; width: 7px; height: 7px; margin: 0 8px 1px 0; border-radius: 50%; background: #37d6b0; box-shadow: 0 0 0 4px #37d6b01f; vertical-align: middle; }
@@ -177,13 +174,14 @@
       @media (max-width: 360px) { .topbar { padding-inline: 9px; gap: 7px; } .brand-logo { width: 36px; height: 36px; } .support-button { padding: 6px; } #article-search { height: 42px; padding-left: 38px; font-size: .9rem; } .search-wrap svg { left: 12px; } main { width: calc(100% - 24px); } .hero { padding-top: 54px; } .eyebrow { font-size: .68rem; } .article { min-height: 100px; } .article-trigger { min-height: 98px; padding: 19px 16px; font-size: 1rem; } .article-answer { padding: 0 16px 18px; font-size: .94rem; } .topic-card { min-height: 175px; padding: 18px; } }
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
     </style>
+    <link rel="stylesheet" href="chat.css?v=1" />
   </head>
   <body>
     <header class="topbar">
       <div class="brand"><img class="brand-logo" src="assets/onchain-logo.png" alt="Onchain logo" /><span class="brand-word">Onchain</span></div>
       <div class="search-wrap"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4.2 4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input id="article-search" type="search" placeholder="Search help articles..." aria-label="Search help articles" /></div>
       <label class="language-picker"><span class="sr-only">Website language</span><select id="language-select" aria-label="Change website language"><option value="en">🌐 Language</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="it">Italiano</option><option value="pt">Português</option><option value="nl">Nederlands</option><option value="sv">Svenska</option><option value="da">Dansk</option><option value="no">Norsk</option><option value="fi">Suomi</option><option value="pl">Polski</option><option value="cs">Čeština</option><option value="ro">Română</option><option value="hu">Magyar</option><option value="el">Ελληνικά</option><option value="tr">Türkçe</option><option value="ru">Русский</option><option value="uk">Українська</option><option value="ar">العربية</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option><option value="zh-CN">简体中文</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="sw">Kiswahili</option></select></label>
-      <button class="support-button" type="button" data-open-chat aria-label="Open support chat"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-2.5 2v-5A7.5 7.5 0 1 1 20 11.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 11.5h.01M12 11.5h.01M16 11.5h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="support-label">Support</span></button>
+      <button class="support-button" type="button" data-open-chat aria-label="Open support FAQ"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-2.5 2v-5A7.5 7.5 0 1 1 20 11.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 11.5h.01M12 11.5h.01M16 11.5h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="support-label">Support</span></button>
     </header>
     <main>
       <section class="hero" aria-labelledby="page-title"><p class="eyebrow">We're here to help</p><h1 id="page-title">How can we help?</h1><p>Find answers fast and get direct assistance</p><a class="primary" href="help.html">Get Instant Help</a></section>
@@ -201,13 +199,13 @@
       <section class="topics-section" id="topics-section" aria-labelledby="topics-title">
         <div class="section-heading topics-heading"><h2 id="topics-title">Browse Topics</h2></div>
         <div class="topic-grid" id="topic-grid">
-          <article class="topic-card" data-topic-card><h3>Onchain App</h3><p>Wallet features, supported assets, deposits, withdrawals, referrals, and security.</p><div class="topic-actions"><span class="topic-tag">App &amp; wallet</span><button class="topic-help-button" type="button" data-open-chat>Ask support</button></div></article>
-          <article class="topic-card" data-topic-card><h3>Onchain Exchange</h3><p>Account setup, trading features, fees, verification, and exchange security.</p><div class="topic-actions"><span class="topic-tag">Exchange</span><button class="topic-help-button" type="button" data-open-chat>Ask support</button></div></article>
-          <article class="topic-card" data-topic-card><h3>Onchain Prepaid Card</h3><p>Eligibility, application, card activation, everyday usage, and benefits.</p><div class="topic-actions"><span class="topic-tag">Prepaid card</span><button class="topic-help-button" type="button" data-open-chat>Ask support</button></div></article>
-          <article class="topic-card" data-topic-card><h3>Onchain Cash Account</h3><p>Account setup, deposits, withdrawals, bank transfers, and account management.</p><div class="topic-actions"><span class="topic-tag">Cash account</span><button class="topic-help-button" type="button" data-open-chat>Ask support</button></div></article>
-          <article class="topic-card" data-topic-card><h3>KYC - Know Your Customer</h3><p>Verification steps, identity documents, applications, and source of funds.</p><div class="topic-actions"><span class="topic-tag">Verification</span><button class="topic-help-button" type="button" data-open-chat>Ask support</button></div></article>
-          <article class="topic-card" data-topic-card><h3>Security</h3><p>App protection, data privacy, device safety, and security awareness.</p><div class="topic-actions"><span class="topic-tag">Safety &amp; privacy</span><button class="topic-help-button" type="button" data-open-chat>Ask support</button></div></article>
-          <article class="topic-card" data-topic-card><h3>Onchain</h3><p>Getting started, wallet management, deposits, and withdrawals.</p><div class="topic-actions"><span class="topic-tag">Getting started</span><button class="topic-help-button" type="button" data-open-chat>Ask support</button></div></article>
+          <article class="topic-card" data-topic-card><h3>Onchain App</h3><p>Wallet features, supported assets, deposits, withdrawals, referrals, and security.</p><div class="topic-actions"><span class="topic-tag">App &amp; wallet</span><button class="topic-help-button" type="button" data-open-chat>View FAQs</button></div></article>
+          <article class="topic-card" data-topic-card><h3>Onchain Exchange</h3><p>Account setup, trading features, fees, verification, and exchange security.</p><div class="topic-actions"><span class="topic-tag">Exchange</span><button class="topic-help-button" type="button" data-open-chat>View FAQs</button></div></article>
+          <article class="topic-card" data-topic-card><h3>Onchain Prepaid Card</h3><p>Eligibility, application, card activation, everyday usage, and benefits.</p><div class="topic-actions"><span class="topic-tag">Prepaid card</span><button class="topic-help-button" type="button" data-open-chat>View FAQs</button></div></article>
+          <article class="topic-card" data-topic-card><h3>Onchain Cash Account</h3><p>Account setup, deposits, withdrawals, bank transfers, and account management.</p><div class="topic-actions"><span class="topic-tag">Cash account</span><button class="topic-help-button" type="button" data-open-chat>View FAQs</button></div></article>
+          <article class="topic-card" data-topic-card><h3>KYC - Know Your Customer</h3><p>Verification steps, identity documents, applications, and source of funds.</p><div class="topic-actions"><span class="topic-tag">Verification</span><button class="topic-help-button" type="button" data-open-chat>View FAQs</button></div></article>
+          <article class="topic-card" data-topic-card><h3>Security</h3><p>App protection, data privacy, device safety, and security awareness.</p><div class="topic-actions"><span class="topic-tag">Safety &amp; privacy</span><button class="topic-help-button" type="button" data-open-chat>View FAQs</button></div></article>
+          <article class="topic-card" data-topic-card><h3>Onchain</h3><p>Getting started, wallet management, deposits, and withdrawals.</p><div class="topic-actions"><span class="topic-tag">Getting started</span><button class="topic-help-button" type="button" data-open-chat>View FAQs</button></div></article>
         </div>
       </section>
       <section class="contact-discovery" aria-labelledby="contact-discovery-title">
@@ -240,8 +238,14 @@
     </main>
     <footer>Need a hand? Use the Support button to reach us.</footer>
 
-    <button class="chat-close" id="chat-close" type="button" aria-label="Close chat panel" hidden><span aria-hidden="true">×</span>Close chat</button>
+    <section class="faq-chat-panel" id="faq-chat-panel" role="dialog" aria-label="Onchain FAQ chat" hidden>
+      <header class="faq-chat-header"><div class="faq-chat-title"><strong>Onchain FAQ</strong><span>Automated answers · no live agent</span></div><button class="faq-chat-close" id="faq-chat-close" type="button" aria-label="Close FAQ chat">×</button></header>
+      <div class="faq-chat-log" id="faq-chat-log" aria-live="polite"><p class="faq-chat-message" data-from="assistant">Hi! Choose a topic and I’ll show a quick answer.</p></div>
+      <div class="faq-chat-options" id="faq-chat-options" role="group" aria-label="Common support questions"></div>
+      <p class="faq-chat-note">This FAQ does not collect or send messages.</p>
+    </section>
     <div id="google_translate_element" aria-hidden="true"></div>
-    <script src="script.js?v=12" defer></script>
+    <script src="script.js?v=13" defer></script>
+    <script src="chat.js?v=1" defer></script>
   </body>
 </html>
